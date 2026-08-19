@@ -7,7 +7,7 @@ One source of truth, two ways of reading it.
 | `catalogue.json` | The source of truth. One object per dataset, one key per field. | You, when adding or editing a record |
 | `climate_health_catalogue_register.csv` | The same content as a flat table. Opens in Excel or Google Sheets; import into CKAN or Airtable. | Partner agencies filling in their own rows |
 | `climate_health_catalogue.html` | Single-file web page. Search, filter by project, domain and access, expand any record. No server, no build step, no internet needed. | Anyone who needs to look something up |
-| `climate_health_catalogue.docx` | Printable and editable. One page per dataset, a summary table, the open gaps, the field definitions and a change log. | The report, and anyone who prefers paper |
+| `climate_health_catalogue.docx` | Printable and editable. One page per dataset, a summary table, the open gaps, the field definitions and a change log. | The revewer report, and anyone who prefers paper |
 
 ## The loop
 

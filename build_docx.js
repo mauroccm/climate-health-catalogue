@@ -176,17 +176,20 @@ order.forEach(domain => {
 // ---------- gaps ----------
 body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { after: 100 },
   children: [new TextRun({ text: 'Open gaps and next steps', bold: true, size: 28, color: INK, font: 'Calibri' })] }));
-body.push(p('What the catalogue makes visible. Each item names the missing description or dataset and the step that closes it.', { size: 20, color: GREY, after: 180 }));
+body.push(p('What the catalogue makes visible. Each item names the missing description or dataset, who owns it and when it closes. ' + gaps.filter(g => g.status === 'Resolved').length + ' of ' + gaps.length + ' are now resolved.', { size: 20, color: GREY, after: 180 }));
 
 const GW = [620, W - 620];
+const TONE = { 'Resolved': '2E6B3E', 'In progress': '9A6B15', 'Planned': '6B7A85' };
 gaps.forEach((g, i) => {
   body.push(new Table({ columnWidths: GW, width: { size: W, type: WidthType.DXA }, rows: [new TableRow({ children: [
-    cell([p(String(i + 1).padStart(2, '0'), { font: 'Consolas', bold: true, size: 20, color: '9A6B15', after: 0 })],
-      { w: GW[0], fill: 'FBF7EF', bc: RULE }),
+    cell([p(String(i + 1).padStart(2, '0'), { font: 'Consolas', bold: true, size: 20, color: TONE[g.status], after: 0 })],
+      { w: GW[0], fill: g.status === 'Resolved' ? 'F0F6F1' : 'FBF7EF', bc: RULE }),
     cell([
-      p(g.gap, { bold: true, size: 21, after: 60 }),
+      p(g.gap, { bold: true, size: 21, after: 30 }),
+      p(g.status.toUpperCase() + '   \u00b7   ' + g.owner + '   \u00b7   ' + g.when,
+        { font: 'Consolas', size: 15, color: TONE[g.status], after: 70 }),
       p(g.detail, { size: 19, color: GREY, after: 80 }),
-      label('Next step', '9A6B15'),
+      label(g.status === 'Resolved' ? 'What was done' : 'Next step', TONE[g.status]),
       p(g.action, { size: 19, after: 0 })
     ], { w: GW[1], bc: RULE })
   ] })] }));
@@ -221,7 +224,13 @@ logRows.push(new TableRow({ children: [
   cell([p('First draft for review. 24 datasets across three research lines; seven open gaps recorded.', { size: 18, after: 0 })], { w: CW[2], bc: RULE }),
   cell([p('MCCM', { size: 18, after: 0 })], { w: CW[3], bc: RULE })
 ] }));
-for (let i = 0; i < 6; i++) logRows.push(new TableRow({ children: CW.map(w =>
+logRows.push(new TableRow({ children: [
+  cell([p('2026-08-19', { size: 18, after: 0 })], { w: CW[0], bc: RULE }),
+  cell([p('0.2', { size: 18, after: 0 })], { w: CW[1], bc: RULE }),
+  cell([p('Seven gaps reviewed: three resolved (Para humidity, HIBR-10 provenance, and one internal data-access item), one in progress (inundation layer, with CLI-006 and ENV-008 added as candidate sources), three planned with named owners and dates. ENV-007 re-described in full.', { size: 18, after: 0 })], { w: CW[2], bc: RULE }),
+  cell([p('MCCM', { size: 18, after: 0 })], { w: CW[3], bc: RULE })
+] }));
+for (let i = 0; i < 5; i++) logRows.push(new TableRow({ children: CW.map(w =>
   cell([p('', { size: 18, after: 0 })], { w, bc: RULE })) }));
 body.push(new Table({ columnWidths: CW, width: { size: W, type: WidthType.DXA }, rows: logRows }));
 

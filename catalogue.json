@@ -3,7 +3,7 @@
     "title": "IPSP Climate and Health Metadata Catalogue",
     "subtitle": "Shared descriptions of the climate, environmental and health datasets used by the Climate and Health Laboratory",
     "institution": "Institut Pasteur de São Paulo (IPSP)",
-    "version": "0.1 (draft for review)",
+    "version": "0.2 (draft for review)",
     "date": "2026-08-19",
     "maintainer": "Mauro César Cafundó de Morais, Climate and Health Laboratory, IPSP",
     "purpose": "The catalogue records, for every dataset the laboratory uses or needs, what it contains, its spatial and temporal resolution, how often it is updated, who holds it, and the conditions under which it can be shared. It does not centralise or open the data. Describing the data consistently is enough to make it usable, and removes the slowest part of the work: finding out what exists and who to ask.",
@@ -40,7 +40,9 @@
       "title": "SINAN - Yellow fever notifications",
       "title_pt": "SINAN - Febre Amarela",
       "domain": "Health",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Individual notification records of suspected and confirmed human yellow fever, including notification and symptom-onset dates, municipality of residence and of probable infection, case classification and outcome.",
       "key_variables": "Notification date; symptom onset date; municipality of residence (IBGE 6-digit); municipality of probable infection; final classification; evolution/death; vaccination status",
       "custodian": "Ministério da Saúde / DATASUS (national); state and municipal surveillance secretariats feed the system",
@@ -70,7 +72,9 @@
       "title": "SINAN - Dengue notifications",
       "title_pt": "SINAN - Dengue (arboviroses)",
       "domain": "Health",
-      "projects": ["DENGUE-SUHI"],
+      "projects": [
+        "DENGUE-SUHI"
+      ],
       "description": "Individual notification records of suspected and confirmed dengue, with symptom-onset date, municipality of residence, laboratory results, serotype where typed, severity classification and outcome.",
       "key_variables": "Symptom onset date; notification date; municipality and district of residence; serotype; laboratory confirmation; severity; hospitalisation; evolution",
       "custodian": "Ministério da Saúde / DATASUS; municipal data flow through COVISA in São Paulo",
@@ -100,9 +104,11 @@
       "title": "COVISA arbovirus surveillance line-list, São Paulo",
       "title_pt": "Vigilância de arboviroses - COVISA, Município de São Paulo",
       "domain": "Health",
-      "projects": ["DENGUE-SUHI"],
-      "description": "Municipal arbovirus surveillance records for São Paulo with residential address geocoding, allowing cases to be assigned to census sectors, districts and weather-station catchments.",
-      "key_variables": "Geocoded residence (point or census sector); symptom onset date; case classification; serotype where available; age; sex",
+      "projects": [
+        "DENGUE-SUHI"
+      ],
+      "description": "Municipal arbovirus surveillance records for São Paulo with residential address geocoding, allowing cases to be assigned to census sectors, districts and weather-station catchments. Includes the subset of cases with a laboratory-confirmed serotype.",
+      "key_variables": "Geocoded residence (point or census sector); symptom onset date; case classification; serotype for laboratory-typed cases; age; sex",
       "custodian": "COVISA - Coordenadoria de Vigilância em Saúde, Secretaria Municipal da Saúde de São Paulo",
       "producer": "COVISA, from SINAN municipal notifications",
       "contact": "To be confirmed - COVISA arbovirus surveillance division",
@@ -117,20 +123,22 @@
       "access_url": "Not published; institutional request",
       "formats": "CSV or database extract, to be agreed",
       "licence": "Not applicable - governed by the data-use agreement",
-      "sharing_conditions": "Requires a formal data-sharing agreement with COVISA and CEP/CONEP ethics approval. Aggregated outputs only; no address-level redistribution; publication drafts shared with COVISA before submission.",
+      "sharing_conditions": "Requires CEP/CONEP ethics approval, then a formal data-sharing agreement with COVISA. Aggregated outputs only; no address-level redistribution; publication drafts shared with COVISA before submission.",
       "personal_data": "Yes - geocoded residence is potentially identifying. Aggregate to census sector before analysis and suppress small counts.",
       "linkage_key": "IBGE census sector code (2022); epidemiological week",
       "limitations": "Geocoding completeness varies by year and by neighbourhood; small-area counts require suppression rules.",
-      "holding_status": "To be acquired",
+      "holding_status": "To be acquired - awaiting ethics approval, then confirmation with COVISA",
       "steward": "IPSP Climate and Health Laboratory",
-      "record_status": "Draft - to verify with COVISA"
+      "record_status": "Draft - confirm with COVISA once ethics approval is granted"
     },
     {
       "id": "HEA-004",
       "title": "SINAN - American cutaneous leishmaniasis notifications",
       "title_pt": "SINAN - Leishmaniose Tegumentar Americana (LTA)",
       "domain": "Health",
-      "projects": ["ACL-AMZ"],
+      "projects": [
+        "ACL-AMZ"
+      ],
       "description": "Individual notification records of American cutaneous leishmaniasis, with clinical form, municipality of residence and of probable infection, diagnostic criteria, treatment and outcome.",
       "key_variables": "Notification and onset dates; municipality of residence and probable infection; clinical form (cutaneous/mucosal); diagnostic criterion; treatment; evolution; occupation",
       "custodian": "Ministério da Saúde / DATASUS; Secretaria de Estado da Saúde do Pará",
@@ -160,7 +168,10 @@
       "title": "SI-PNI immunisation coverage",
       "title_pt": "SI-PNI - Cobertura vacinal",
       "domain": "Health",
-      "projects": ["YF-TMIN", "DENGUE-SUHI"],
+      "projects": [
+        "YF-TMIN",
+        "DENGUE-SUHI"
+      ],
       "description": "Doses administered and coverage estimates by municipality, age group and immunobiological, including yellow fever and dengue vaccines. Used as a confounder and as denominator context.",
       "key_variables": "Doses applied; immunobiological; dose number; age group; municipality; administration date",
       "custodian": "Ministério da Saúde / DATASUS - Programa Nacional de Imunizações",
@@ -190,7 +201,9 @@
       "title": "Non-human primate epizootic records",
       "title_pt": "Vigilância de epizootias em primatas não humanos",
       "domain": "Health",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Reports of sickness or death in non-human primates investigated for yellow fever, the earliest available signal of sylvatic virus circulation and therefore a candidate outcome ahead of human cases.",
       "key_variables": "Event date; municipality; species; laboratory result; classification",
       "custodian": "Ministério da Saúde / SVSA; state surveillance; SISS-Geo (Fiocruz) for citizen reports",
@@ -220,7 +233,11 @@
       "title": "ERA5-Land reanalysis - daily surface variables",
       "title_pt": "Reanálise ERA5-Land - variáveis diárias de superfície",
       "domain": "Climate",
-      "projects": ["YF-TMIN", "DENGUE-SUHI", "ACL-AMZ"],
+      "projects": [
+        "YF-TMIN",
+        "DENGUE-SUHI",
+        "ACL-AMZ"
+      ],
       "description": "Global land-surface climate reconstruction. The laboratory downloads minimum, mean and maximum 2 m air temperature, total precipitation, 2 m dew-point temperature, 10 m wind components and surface pressure, then reduces each to one value per municipality.",
       "key_variables": "Tmin, Tmean, Tmax (2 m); total precipitation; dew-point temperature; 10 m U and V wind; surface pressure",
       "custodian": "European Centre for Medium-Range Weather Forecasts, through the Copernicus Climate Data Store",
@@ -240,7 +257,7 @@
       "sharing_conditions": "Raw data freely redistributable under the Copernicus licence. Derived municipality series may be published with attribution.",
       "personal_data": "No",
       "linkage_key": "IBGE municipality code (7-digit); date",
-      "limitations": "Temperatures arrive in Kelvin (subtract 273.15). A reanalysis is a model product, not a measurement, and 9 km cannot resolve within-city heat contrasts - use CLI-004 for that. Coastal and steep-terrain municipalities are least reliable.",
+      "limitations": "Temperatures arrive in Kelvin (subtract 273.15). A reanalysis is a model product, not a measurement, and 9 km cannot resolve within-city heat contrasts - use CLI-004 for that. Coastal and steep-terrain municipalities are least reliable. The Pará download was extended to dew-point temperature in August 2026; series before that date do not contain it.",
       "holding_status": "In use",
       "steward": "IPSP Climate and Health Laboratory",
       "record_status": "Verified"
@@ -250,7 +267,9 @@
       "title": "ERA5-Land weekly climatological normals",
       "title_pt": "Normais climatológicas semanais derivadas do ERA5-Land",
       "domain": "Climate",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Pre-computed long-term weekly averages per municipality, used as the reference against which any week of any year is called normal or anomalous.",
       "key_variables": "Weekly normals for Tmin (1981-2010 and 1991-2020), Tmax, precipitation, relative humidity and wind speed (1981-2010)",
       "custodian": "IPSP Climate and Health Laboratory (derived); ERA5-Land upstream",
@@ -280,7 +299,9 @@
       "title": "Large-scale climate indices - ENSO, IOD, PDO",
       "title_pt": "Índices climáticos de larga escala",
       "domain": "Climate",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Single global time series describing El Niño-Southern Oscillation, the Indian Ocean Dipole and the Pacific Decadal Oscillation, used as background drivers common to all municipalities.",
       "key_variables": "ENSO index; IOD index; PDO index",
       "custodian": "Obtained through the InfoDengue Sprint 2024-25 dataset; original indices from NOAA and equivalent agencies",
@@ -310,7 +331,9 @@
       "title": "CGE/CGESP municipal weather-station network, São Paulo",
       "title_pt": "Rede de estações meteorológicas do CGE - Município de São Paulo",
       "domain": "Climate",
-      "projects": ["DENGUE-SUHI"],
+      "projects": [
+        "DENGUE-SUHI"
+      ],
       "description": "The municipal network of automatic weather and rainfall stations operated by São Paulo's climate emergency management centre. This is the only source fine enough to separate hot from cool neighbourhoods inside the city, which is what the heat-island analysis needs.",
       "key_variables": "Air temperature; relative humidity; rainfall; wind; station coordinates and installation history",
       "custodian": "CGE - Centro de Gerenciamento de Emergências Climáticas, Prefeitura de São Paulo",
@@ -327,21 +350,25 @@
       "access_url": "https://www.cgesp.org/",
       "formats": "To be confirmed - web portal, possible CSV export",
       "licence": "To be confirmed",
-      "sharing_conditions": "To be agreed with CGE. Expect attribution and possibly a co-authorship or acknowledgement arrangement for the historical archive.",
+      "sharing_conditions": "To be agreed with CGE at project start, together with archive access, the station history file and the citation terms. Expect attribution and possibly an acknowledgement or co-authorship arrangement for the historical archive.",
       "personal_data": "No",
       "linkage_key": "Station identifier with coordinates; date",
       "limitations": "Stations are unevenly distributed and periphery coverage is thinner than the centre, which risks under-measuring the hottest and most dengue-affected areas. Record gaps and instrument changes need a station-history file.",
-      "holding_status": "To be acquired - the key dependency for this project",
+      "holding_status": "To be acquired - terms agreed at project start",
       "steward": "IPSP Climate and Health Laboratory",
-      "record_status": "Draft - to verify with CGE"
+      "record_status": "Draft - confirm with CGE at project start"
     },
     {
       "id": "CLI-005",
       "title": "INMET automatic station network",
       "title_pt": "Rede de estações automáticas do INMET",
       "domain": "Climate",
-      "projects": ["YF-TMIN", "DENGUE-SUHI", "ACL-AMZ"],
-      "description": "The national network of automatic surface stations. Its role here is validation: it is the ground measurement against which the ERA5-Land reconstruction and the municipal network can be checked.",
+      "projects": [
+        "YF-TMIN",
+        "DENGUE-SUHI",
+        "ACL-AMZ"
+      ],
+      "description": "The national network of automatic surface stations. Its role here is validation: it is the ground measurement used to quantify the bias in the ERA5-Land reanalysis (CLI-001), municipality by municipality, with particular attention to Pará where stations are sparse.",
       "key_variables": "Air temperature (instantaneous, max, min); relative humidity; precipitation; wind; pressure; radiation",
       "custodian": "INMET - Instituto Nacional de Meteorologia",
       "producer": "INMET",
@@ -360,8 +387,40 @@
       "sharing_conditions": "Redistributable with attribution.",
       "personal_data": "No",
       "linkage_key": "Station code and coordinates; IBGE municipality code; date",
-      "limitations": "Very sparse in Pará, so it cannot validate the ACL climate layers everywhere. Gaps and sensor changes are common and are not always flagged in the files.",
-      "holding_status": "Candidate - not yet acquired",
+      "limitations": "Very sparse in Pará, so the bias estimate will have wide uncertainty over much of the ACL study area, and that uncertainty should be reported rather than smoothed over. Gaps and sensor changes are common and are not always flagged in the files.",
+      "holding_status": "To be acquired - bias quantification against ERA5-Land",
+      "steward": "IPSP Climate and Health Laboratory",
+      "record_status": "Draft"
+    },
+    {
+      "id": "CLI-006",
+      "title": "ANA hydrological station network (HidroWeb)",
+      "title_pt": "Rede hidrológica da ANA (HidroWeb)",
+      "domain": "Climate",
+      "projects": [
+        "ACL-AMZ"
+      ],
+      "description": "River stage and discharge measured at gauging stations on Amazonian rivers. This is the measured alternative to using extreme rainfall as a stand-in for flooding: a river level above its flood reference is an observation, not an inference.",
+      "key_variables": "River stage (cm); discharge (m3/s); rainfall at co-located gauges; flood reference level",
+      "custodian": "ANA - Agência Nacional de Águas e Saneamento Básico",
+      "producer": "ANA, with state and utility operators",
+      "contact": "HidroWeb portal and the ANA API",
+      "spatial_coverage": "Brazil - station network; denser on main Amazonian channels than on tributaries",
+      "native_resolution": "Point stations on river reaches",
+      "analysis_unit": "Station, assigned to downstream municipalities in its catchment",
+      "temporal_coverage": "Varies by station; many Amazonian records run from the 1970s",
+      "temporal_resolution": "Daily stage readings; sub-daily at telemetric stations",
+      "update_frequency": "Daily to near real time at telemetric stations",
+      "latency": "Hours at telemetric stations; months for validated historical series",
+      "access": "Open",
+      "access_url": "https://www.snirh.gov.br/hidroweb/",
+      "formats": "CSV, API",
+      "licence": "Open government data, attribution to ANA",
+      "sharing_conditions": "Redistributable with attribution.",
+      "personal_data": "No",
+      "linkage_key": "Station code with coordinates; IBGE municipality code of the catchment; date",
+      "limitations": "A gauge measures the river, not the floodplain. Stations sit on main channels, so flooding in small tributary settlements - where ACL transmission concentrates - may not register. Assess coverage against the case municipalities before committing.",
+      "holding_status": "Candidate - under assessment for the inundation layer",
       "steward": "IPSP Climate and Health Laboratory",
       "record_status": "Draft"
     },
@@ -370,7 +429,10 @@
       "title": "MODIS vegetation greenness (NDVI)",
       "title_pt": "Índice de vegetação (NDVI) - MODIS",
       "domain": "Environment",
-      "projects": ["YF-TMIN", "ACL-AMZ"],
+      "projects": [
+        "YF-TMIN",
+        "ACL-AMZ"
+      ],
       "description": "Satellite measure of how green and dense vegetation is. Two variants are held: a ~1 km series obtained through NASA AppEEARS for the yellow fever work, and the 250 m MOD13Q1 product obtained through Google Earth Engine for the leishmaniasis work.",
       "key_variables": "NDVI (maximum, mean, minimum, standard deviation per municipality)",
       "custodian": "NASA - LP DAAC, accessed through AppEEARS and Google Earth Engine",
@@ -400,7 +462,11 @@
       "title": "MapBiomas land cover and land use",
       "title_pt": "MapBiomas - cobertura e uso da terra",
       "domain": "Environment",
-      "projects": ["YF-TMIN", "DENGUE-SUHI", "ACL-AMZ"],
+      "projects": [
+        "YF-TMIN",
+        "DENGUE-SUHI",
+        "ACL-AMZ"
+      ],
       "description": "Annual national land-cover map from Landsat imagery. Supplies forest cover and fragmentation for the yellow fever work, and areas of deforestation, secondary regrowth, agriculture and water for the leishmaniasis work.",
       "key_variables": "Class areas per municipality-year: forest, secondary vegetation, agriculture, pasture, urban, water; derived fragmentation metrics",
       "custodian": "MapBiomas project (Brazilian civil-society and academic network)",
@@ -430,7 +496,9 @@
       "title": "Built-up surface index (NDBI)",
       "title_pt": "Índice de área construída (NDBI)",
       "domain": "Environment",
-      "projects": ["ACL-AMZ"],
+      "projects": [
+        "ACL-AMZ"
+      ],
       "description": "Satellite measure of how built-up or bare a surface is, derived from Landsat and Sentinel-2 imagery in Google Earth Engine and reduced to a yearly median per municipality.",
       "key_variables": "NDBI (yearly median per municipality)",
       "custodian": "USGS (Landsat) and ESA (Sentinel-2), accessed through Google Earth Engine",
@@ -460,7 +528,9 @@
       "title": "Land surface temperature for urban heat islands",
       "title_pt": "Temperatura de superfície (LST) para ilhas de calor",
       "domain": "Environment",
-      "projects": ["DENGUE-SUHI"],
+      "projects": [
+        "DENGUE-SUHI"
+      ],
       "description": "Thermal satellite imagery giving surface temperature across the city, used to map the heat-island pattern between the sparse weather stations and to characterise every census sector.",
       "key_variables": "Land surface temperature; derived surface urban heat island intensity per census sector",
       "custodian": "USGS (Landsat 8/9) and NASA (MODIS), accessed through Google Earth Engine",
@@ -490,7 +560,9 @@
       "title": "Terrain elevation and slope (SRTM)",
       "title_pt": "Altimetria e declividade (SRTM)",
       "domain": "Environment",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Digital elevation model used to derive mean slope and relief range per municipality, as context for temperature and for vector habitat.",
       "key_variables": "Elevation; mean slope; relief range per municipality",
       "custodian": "NASA, accessed through AppEEARS",
@@ -520,7 +592,9 @@
       "title": "WorldClim elevation (coarse backup)",
       "title_pt": "Altimetria WorldClim (reserva, baixa resolução)",
       "domain": "Environment",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Coarse global elevation layer held as a fallback. Retained in the catalogue for completeness and explicitly not used in the models.",
       "key_variables": "Elevation",
       "custodian": "WorldClim (University of California, Davis)",
@@ -547,40 +621,78 @@
     },
     {
       "id": "ENV-007",
-      "title": "Human Footprint Index layer",
-      "title_pt": "Índice de pegada humana",
+      "title": "Human footprint index, HIBR-10",
+      "title_pt": "Índice de pegada humana - HIBR-10",
       "domain": "Environment",
-      "projects": ["ACL-AMZ"],
-      "description": "A single raster of cumulative human pressure on the landscape, added to the leishmaniasis project as a supplied file. Its provenance is incomplete and this record exists mainly to make that visible.",
-      "key_variables": "Human footprint score",
-      "custodian": "Unknown - file HFI_Weighted_v1.tif supplied to the project",
-      "producer": "Not recorded",
-      "contact": "Not recorded",
-      "spatial_coverage": "Clipped to State of Pará",
-      "native_resolution": "Not recorded",
-      "analysis_unit": "Municipality",
-      "temporal_coverage": "Static, year unknown",
+      "projects": [
+        "ACL-AMZ"
+      ],
+      "description": "Human Impact on the Brazilian Environment at 10 m resolution (HIBR-10): a national raster scoring human pressure on every 10 m cell from land cover, building density, and distance to major roads, railways and navigable waterways. It is the highest-resolution human footprint layer available for Brazil.",
+      "key_variables": "Weighted human footprint score, 0-100 (rescaled from 0-10); component layers supplied separately",
+      "custodian": "Zenodo deposit 10.5281/zenodo.15306587 (Hamilton & Presotto, 2025)",
+      "producer": "Presotto A, Hamilton S, Izar P. A 10-meter resolution human footprint dataset to support biodiversity and conservation studies in Brazil. Scientific Data 2025;12:1754. doi:10.1038/s41597-025-06034-0",
+      "contact": "Stuart Hamilton, East Carolina University (corresponding author)",
+      "spatial_coverage": "Brazil, all biomes; clipped to State of Pará for this project",
+      "native_resolution": "10 m (86.5 billion cells), projected EPSG:5880 SIRGAS 2000 / Brazil Polyconic",
+      "analysis_unit": "Municipality (zonal mean of the footprint score)",
+      "temporal_coverage": "Static - built from 2023 Sentinel-2 land cover and post-2020 building footprints",
       "temporal_resolution": "Static",
-      "update_frequency": "Unknown",
+      "update_frequency": "By release version; the file is HFI_Weighted_vx.tif, higher x is a later release",
       "latency": "Not applicable",
-      "access": "Internal only",
-      "access_url": "Not published",
-      "formats": "GeoTIFF",
-      "licence": "Unknown - cannot be redistributed until identified",
-      "sharing_conditions": "Do not redistribute. Identify the source publication before using this layer in any output.",
+      "access": "Open",
+      "access_url": "https://zenodo.org/records/15306587",
+      "formats": "GeoTIFF (raster), Shapefile (input vectors)",
+      "licence": "Article CC BY-NC-ND 4.0. Check the Zenodo deposit terms before redistributing any derived layer, since NC-ND would restrict it.",
+      "sharing_conditions": "Cite Presotto et al. 2025 and the Zenodo DOI. Confirm the deposit licence before publishing a derived or reweighted layer.",
       "personal_data": "No",
-      "linkage_key": "IBGE municipality code",
-      "limitations": "No recorded author, year or native resolution. Flagged as a provenance gap to close before publication.",
-      "holding_status": "In use - provenance incomplete",
+      "linkage_key": "IBGE municipality code (7-digit)",
+      "limitations": "NoData is coded 255, not null - set it explicitly or the zonal means are wrong. Scores are rescaled 0-100 from the published 0-10 scale. The aggregation weights (40% land cover, 40% building density, 10% major roads, 5% railways, 5% waterways) are the authors' choices for primate conservation; the authors intend users to reweight for their own question, which for ACL might mean raising forest-edge and waterway terms. A single snapshot, so no change over the 2000-2024 study period.",
+      "holding_status": "In use",
       "steward": "IPSP Climate and Health Laboratory",
-      "record_status": "Action needed - identify source"
+      "record_status": "Verified"
+    },
+    {
+      "id": "ENV-008",
+      "title": "Satellite surface-water and flood extent",
+      "title_pt": "Extensão de água superficial e inundação por satélite",
+      "domain": "Environment",
+      "projects": [
+        "ACL-AMZ"
+      ],
+      "description": "Mapped water surface through time, from the JRC Global Surface Water record and MapBiomas Água. Together these give seasonal and permanent water extent per municipality, which is the closest thing to a real inundation layer without new field data.",
+      "key_variables": "Water occurrence and seasonality; monthly water extent; flooded area per municipality-month",
+      "custodian": "European Commission Joint Research Centre (JRC); MapBiomas project",
+      "producer": "JRC Global Surface Water (Landsat); MapBiomas Água",
+      "contact": "Google Earth Engine account; MapBiomas platform",
+      "spatial_coverage": "Global (JRC) and Brazil (MapBiomas Água); subset State of Pará",
+      "native_resolution": "30 m (both products)",
+      "analysis_unit": "Municipality x month (flooded area and share of municipal area)",
+      "temporal_coverage": "1984-present (JRC); 1985-2023 (MapBiomas Água)",
+      "temporal_resolution": "Monthly (JRC history) and annual/monthly (MapBiomas Água)",
+      "update_frequency": "Annual reprocessing",
+      "latency": "About 1 year",
+      "access": "Open",
+      "access_url": "https://global-surface-water.appspot.com/",
+      "formats": "GeoTIFF, Earth Engine image collections",
+      "licence": "JRC open data (CC BY 4.0); MapBiomas CC BY-SA 4.0",
+      "sharing_conditions": "Redistributable with attribution to each product.",
+      "personal_data": "No",
+      "linkage_key": "IBGE municipality code; year-month",
+      "limitations": "Optical sensors cannot see water under forest canopy or through Amazonian cloud, which is exactly when and where flooding matters. Treat as a lower bound. If canopy flooding proves important, radar (Sentinel-1) would be the next step, at a higher processing cost.",
+      "holding_status": "Candidate - under assessment for the inundation layer",
+      "steward": "IPSP Climate and Health Laboratory",
+      "record_status": "Draft"
     },
     {
       "id": "REF-001",
       "title": "IBGE municipal boundaries",
       "title_pt": "Malha municipal - IBGE",
       "domain": "Reference",
-      "projects": ["YF-TMIN", "DENGUE-SUHI", "ACL-AMZ"],
+      "projects": [
+        "YF-TMIN",
+        "DENGUE-SUHI",
+        "ACL-AMZ"
+      ],
       "description": "The official municipal boundary geometry. Every gridded climate and environmental layer is reduced to municipality values against this mesh, so it is the join that holds the whole catalogue together.",
       "key_variables": "Municipality polygon; 7-digit IBGE code; name; state; area",
       "custodian": "IBGE - Instituto Brasileiro de Geografia e Estatística",
@@ -610,7 +722,9 @@
       "title": "IBGE 2022 census - sector-level indicators",
       "title_pt": "Censo 2022 - setores censitários",
       "domain": "Reference",
-      "projects": ["DENGUE-SUHI"],
+      "projects": [
+        "DENGUE-SUHI"
+      ],
       "description": "Population, income, household density and sanitation indicators at census-sector level, the finest official social geography available. Supplies both the denominator and the main confounders for the São Paulo heat-island analysis.",
       "key_variables": "Resident population; household density; income; water supply; sewerage connection; waste collection; sector polygon",
       "custodian": "IBGE",
@@ -640,7 +754,9 @@
       "title": "Static municipal environmental context",
       "title_pt": "Contexto ambiental municipal estático",
       "domain": "Reference",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "A fixed table of Köppen climate class, biome and altitude per municipality, used as unchanging context in the models.",
       "key_variables": "Köppen class; biome; altitude",
       "custodian": "InfoDengue Sprint 2024-25 environmental table",
@@ -670,7 +786,9 @@
       "title": "Municipality zonal statistics and climate anomaly indicators",
       "title_pt": "Estatísticas zonais e indicadores de anomalia climática",
       "domain": "Derived",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "The published municipality-level climate summaries and anomaly indicators produced by the laboratory, deposited on Zenodo so that others can reuse the processing rather than repeat it.",
       "key_variables": "Municipality zonal statistics for the ERA5-Land variables; anomaly indicators against the weekly normals",
       "custodian": "IPSP Climate and Health Laboratory; hosted by Zenodo",
@@ -700,7 +818,9 @@
       "title": "Yellow fever exposure indicators",
       "title_pt": "Indicadores de exposição - febre amarela",
       "domain": "Derived",
-      "projects": ["YF-TMIN"],
+      "projects": [
+        "YF-TMIN"
+      ],
       "description": "Exposure variables built from minimum temperature rather than downloaded: warm-night counts, warm spells and anomalies against the weekly normals. These are the actual model inputs.",
       "key_variables": "Days with Tmin above 17 C; runs of 7 or more consecutive warm days in April-September; Tmin anomaly against the 1981-2010 and 1991-2020 normals; extreme-rainfall weeks above the 99th percentile",
       "custodian": "IPSP Climate and Health Laboratory",
@@ -730,9 +850,11 @@
       "title": "Leishmaniasis climate and vector indicators",
       "title_pt": "Indicadores climáticos e vetoriais - leishmaniose",
       "domain": "Derived",
-      "projects": ["ACL-AMZ"],
-      "description": "Indicators built from temperature and rainfall for the ACL models, including a simple sand-fly population simulation. This is also the only route by which moisture enters the analysis, since no humidity variable was downloaded.",
-      "key_variables": "Seasonal temperature and rainfall anomalies (2000-2024 baseline); accumulated warmth above 10 C; favourable-infection flag (22-28 C and rainfall above 50 mm); simulated sand-fly density; 1-8 month lags; 3-month rolling mean of case counts",
+      "projects": [
+        "ACL-AMZ"
+      ],
+      "description": "Indicators built from temperature, rainfall and humidity for the ACL models, including a simple sand-fly population simulation. Relative humidity is computed from ERA5-Land dew-point using the same method as the yellow fever work.",
+      "key_variables": "Relative humidity derived from 2 m dew-point and air temperature; seasonal temperature, rainfall and humidity anomalies (2000-2024 baseline); accumulated warmth above 10 C; favourable-infection flag (22-28 C and rainfall above 50 mm); simulated sand-fly density; 1-8 month lags; 3-month rolling mean of case counts",
       "custodian": "IPSP Climate and Health Laboratory",
       "producer": "IPSP",
       "contact": "IPSP Climate and Health Laboratory",
@@ -750,39 +872,120 @@
       "sharing_conditions": "Shareable with collaborators now; deposit publicly at acceptance.",
       "personal_data": "No",
       "linkage_key": "IBGE municipality code; year-month",
-      "limitations": "The favourable-infection thresholds and the vector model are assumptions carried into every downstream result; document and sensitivity-test them. The 2000-2024 anomaly baseline is the study period itself, which shrinks apparent trends.",
+      "limitations": "The favourable-infection thresholds and the vector model are assumptions carried into every downstream result; document and sensitivity-test them. The 2000-2024 anomaly baseline is the study period itself, which shrinks apparent trends. Humidity is derived, not measured - validate against INMET stations (CLI-005).",
       "holding_status": "In use",
       "steward": "IPSP Climate and Health Laboratory",
       "record_status": "Verified"
     }
   ],
   "field_definitions": [
-    ["Catalogue ID", "Stable identifier. Prefix marks the domain: HEA health, CLI climate, ENV environment, REF reference geography, DER derived by the laboratory."],
-    ["Title", "The name the dataset is known by, in English and Portuguese."],
-    ["Domain", "Health, Climate, Environment, Reference or Derived."],
-    ["Projects", "Which of the three research lines use this dataset. Datasets used by more than one project are the reason the catalogue is shared rather than per-project."],
-    ["What it contains", "Plain-language description of the contents, written for someone who has not used the dataset."],
-    ["Key variables", "The specific fields or bands actually used."],
-    ["Who holds it", "The organisation that controls access, which is not always the organisation that produced it."],
-    ["Producer", "The system or programme that generates the data."],
-    ["Contact", "Where to ask. A portal, a named division, or an account type."],
-    ["Spatial coverage", "The geographic extent held."],
-    ["Native spatial resolution", "The pixel size, station spacing or record granularity as distributed."],
-    ["Analysis unit", "What one row becomes after processing. Almost everything here is reduced to one value per municipality or census sector."],
-    ["Temporal coverage", "The period available."],
-    ["Temporal resolution", "The time step as distributed, and the step it is aggregated to."],
-    ["Update frequency", "How often new data appear."],
-    ["Latency", "How far behind real time the most recent usable record sits. This is the field that decides whether a dataset can support an operational decision."],
-    ["Access", "Open, open with registration, by request, or restricted by agreement."],
-    ["Access URL", "Where to obtain it."],
-    ["Formats", "Distribution formats."],
-    ["Licence", "Reuse terms."],
-    ["Sharing conditions", "What must be in place before the data can be used or passed on: agreements, ethics approval, attribution, suppression rules, pre-publication review."],
-    ["Personal data", "Whether the records identify or could identify individuals, and what must be done about it."],
-    ["Linkage key", "The field that joins this dataset to the others. Recording it is what makes the catalogue operational rather than descriptive."],
-    ["Known limitations", "What the dataset cannot tell you, stated before someone discovers it during analysis."],
-    ["Holding status", "In use, held but unused, to be acquired, or a candidate under consideration."],
-    ["Steward", "Who at IPSP is answerable for this record."],
-    ["Record status", "Verified, draft, or action needed. Draft records are entries where the description still needs confirmation from the holder."]
+    [
+      "Catalogue ID",
+      "Stable identifier. Prefix marks the domain: HEA health, CLI climate, ENV environment, REF reference geography, DER derived by the laboratory."
+    ],
+    [
+      "Title",
+      "The name the dataset is known by, in English and Portuguese."
+    ],
+    [
+      "Domain",
+      "Health, Climate, Environment, Reference or Derived."
+    ],
+    [
+      "Projects",
+      "Which of the three research lines use this dataset. Datasets used by more than one project are the reason the catalogue is shared rather than per-project."
+    ],
+    [
+      "What it contains",
+      "Plain-language description of the contents, written for someone who has not used the dataset."
+    ],
+    [
+      "Key variables",
+      "The specific fields or bands actually used."
+    ],
+    [
+      "Who holds it",
+      "The organisation that controls access, which is not always the organisation that produced it."
+    ],
+    [
+      "Producer",
+      "The system or programme that generates the data."
+    ],
+    [
+      "Contact",
+      "Where to ask. A portal, a named division, or an account type."
+    ],
+    [
+      "Spatial coverage",
+      "The geographic extent held."
+    ],
+    [
+      "Native spatial resolution",
+      "The pixel size, station spacing or record granularity as distributed."
+    ],
+    [
+      "Analysis unit",
+      "What one row becomes after processing. Almost everything here is reduced to one value per municipality or census sector."
+    ],
+    [
+      "Temporal coverage",
+      "The period available."
+    ],
+    [
+      "Temporal resolution",
+      "The time step as distributed, and the step it is aggregated to."
+    ],
+    [
+      "Update frequency",
+      "How often new data appear."
+    ],
+    [
+      "Latency",
+      "How far behind real time the most recent usable record sits. This is the field that decides whether a dataset can support an operational decision."
+    ],
+    [
+      "Access",
+      "Open, open with registration, by request, or restricted by agreement."
+    ],
+    [
+      "Access URL",
+      "Where to obtain it."
+    ],
+    [
+      "Formats",
+      "Distribution formats."
+    ],
+    [
+      "Licence",
+      "Reuse terms."
+    ],
+    [
+      "Sharing conditions",
+      "What must be in place before the data can be used or passed on: agreements, ethics approval, attribution, suppression rules, pre-publication review."
+    ],
+    [
+      "Personal data",
+      "Whether the records identify or could identify individuals, and what must be done about it."
+    ],
+    [
+      "Linkage key",
+      "The field that joins this dataset to the others. Recording it is what makes the catalogue operational rather than descriptive."
+    ],
+    [
+      "Known limitations",
+      "What the dataset cannot tell you, stated before someone discovers it during analysis."
+    ],
+    [
+      "Holding status",
+      "In use, held but unused, to be acquired, or a candidate under consideration."
+    ],
+    [
+      "Steward",
+      "Who at IPSP is answerable for this record."
+    ],
+    [
+      "Record status",
+      "Verified, draft, or action needed. Draft records are entries where the description still needs confirmation from the holder."
+    ]
   ]
 }

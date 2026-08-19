@@ -15,9 +15,9 @@ GRAIN = {
     "HEA-001": (3, 5), "HEA-002": (3, 5), "HEA-003": (5, 5), "HEA-004": (3, 5),
     "HEA-005": (3, 3), "HEA-006": (3, 5),
     "CLI-001": (2, 5), "CLI-002": (2, 4), "CLI-003": (1, 4), "CLI-004": (5, 5),
-    "CLI-005": (5, 5),
+    "CLI-005": (5, 5), "CLI-006": (4, 5),
     "ENV-001": (4, 3), "ENV-002": (5, 2), "ENV-003": (5, 2), "ENV-004": (4, 3),
-    "ENV-005": (5, 1), "ENV-006": (1, 1), "ENV-007": (1, 1),
+    "ENV-005": (5, 1), "ENV-006": (1, 1), "ENV-007": (5, 1), "ENV-008": (5, 3),
     "REF-001": (3, 2), "REF-002": (5, 2), "REF-003": (3, 1),
     "DER-001": (2, 4), "DER-002": (2, 4), "DER-003": (2, 3),
 }
@@ -142,9 +142,17 @@ dom_filters = "".join(
     f'<button class="f" data-f="dom" data-v="{d}" style="--c:{c}">{d}</button>'
     for d, c in DOMAIN_COLOUR.items())
 
+GAP_TONE = {"Resolved": "done", "In progress": "wip", "Planned": "todo"}
 gap_rows = "".join(
-    f'<li><h4>{e(g["gap"])}</h4><p>{e(g["detail"])}</p><p class="act"><span>Next step</span> {e(g["action"])}</p></li>'
+    f'<li class="g-{GAP_TONE[g["status"]]}">'
+    f'<div class="ghead"><h4>{e(g["gap"])}</h4><span class="gstat">{e(g["status"])}</span></div>'
+    f'<p>{e(g["detail"])}</p>'
+    f'<p class="act"><span>{"What was done" if g["status"] == "Resolved" else "Next step"}</span> '
+    f'{e(g["action"])}</p>'
+    f'<p class="gown">{e(g["owner"])} &#183; {e(g["when"])}</p></li>'
     for g in gaps)
+gap_tally = " &#183; ".join(f'{sum(1 for g in gaps if g["status"] == k)} {k.lower()}'
+                       for k in ["Resolved", "In progress", "Planned"])
 
 field_rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in fields)
 
@@ -254,9 +262,19 @@ dl.grid dd{{margin:1px 0 0;font-size:13px}}
 ol.gaps{{list-style:none;counter-reset:g;padding:0;margin:0}}
 ol.gaps li{{counter-increment:g;background:var(--card);border:1px solid var(--rule);
  padding:15px 18px 15px 52px;position:relative;margin-bottom:6px}}
-ol.gaps li::before{{content:counter(g,decimal-leading-zero);position:absolute;left:18px;top:15px;
- font:12px var(--mono);color:var(--part);font-weight:700}}
-ol.gaps h4{{margin:0 0 5px;font-size:15px}}
+ol.gaps li::before{{content:counter(g,decimal-leading-zero);position:absolute;left:18px;top:16px;
+ font:12px var(--mono);color:var(--ink-3);font-weight:700}}
+ol.gaps li{{border-left:3px solid var(--rule)}}
+.g-done{{border-left-color:var(--open) !important}}
+.g-wip{{border-left-color:var(--part) !important}}
+.g-todo{{border-left-color:var(--ink-3) !important}}
+.ghead{{display:flex;align-items:baseline;gap:12px;margin-bottom:5px}}
+.gstat{{margin-left:auto;font:9.5px var(--mono);letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}}
+.g-done .gstat{{color:var(--open)}} .g-wip .gstat{{color:var(--part)}} .g-todo .gstat{{color:var(--ink-3)}}
+.g-done .act span{{color:var(--open)}} .g-todo .act span{{color:var(--ink-3)}}
+.gown{{margin:8px 0 0 !important;font:10.5px var(--mono) !important;color:var(--ink-3) !important}}
+.tally2{{float:right;font:11px var(--mono);letter-spacing:0;text-transform:none;color:var(--ink-3)}}
+ol.gaps h4{{margin:0;font-size:15px}}
 ol.gaps p{{margin:0 0 6px;color:var(--ink-2);font-size:14px;max-width:80ch}}
 .act{{font-size:13px !important;color:var(--ink) !important}}
 .act span{{font:9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--part);margin-right:8px}}
@@ -314,7 +332,7 @@ footer{{margin-top:50px;padding-top:16px;border-top:1px solid var(--rule);
 </div>
 <div id="list">{"".join(row(d) for d in sets)}</div>
 
-<h2>Open gaps and next steps</h2>
+<h2>Gaps and next steps <span class="tally2">{gap_tally}</span></h2>
 <ol class="gaps">{gap_rows}</ol>
 
 <h2>What each field means</h2>
