@@ -5,7 +5,7 @@ const {
   PageBreak, TableOfContents, Header, Footer, PageNumber, convertMillimetersToTwip
 } = require('docx');
 
-const D = JSON.parse(fs.readFileSync('/home/claude/catalogue/catalogue.json', 'utf8'));
+const D = JSON.parse(fs.readFileSync(__dirname + '/catalogue.json', 'utf8'));
 const cat = D.catalogue, sets = D.datasets, gaps = D.gaps, fields = D.field_definitions;
 
 const W = 9638;               // usable width in DXA (A4 portrait, 2 cm margins)
@@ -256,6 +256,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(b => {
-  fs.writeFileSync('/mnt/user-data/outputs/climate_health_catalogue.docx', b);
+  fs.writeFileSync(__dirname + '/climate_health_catalogue.docx', b);
   console.log('docx written', b.length);
 });

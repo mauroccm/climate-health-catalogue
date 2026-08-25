@@ -2,9 +2,9 @@
 """Build the CSV register and the single-file HTML catalogue from catalogue.json."""
 import json, csv, html, pathlib
 
-SRC = pathlib.Path("/home/claude/catalogue/catalogue.json")
-OUT = pathlib.Path("/mnt/user-data/outputs")
-OUT.mkdir(parents=True, exist_ok=True)
+HERE = pathlib.Path(__file__).resolve().parent
+SRC = HERE / "catalogue.json"
+OUT = HERE
 
 D = json.loads(SRC.read_text(encoding="utf-8"))
 cat, sets, gaps, fields = D["catalogue"], D["datasets"], D["gaps"], D["field_definitions"]

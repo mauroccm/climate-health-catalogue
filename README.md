@@ -22,11 +22,26 @@ If you would rather work in a spreadsheet, edit the CSV and convert it back to J
 
 ## Publishing the web page
 
-The HTML is one self-contained file with no external dependencies. Any of these work:
+The HTML is one self-contained file with no external dependencies, so it travels anywhere — put it on the IPSP web server, or email it and it opens from disk.
 
-- Drop it in a GitHub repository and turn on GitHub Pages
-- Put it on the IPSP web server
-- Email it — it opens from a local file
+It is also published as a GitHub Page:
+
+**https://mauroccm.github.io/climate-health-catalogue/**
+
+To update it, rebuild and push:
+
+```bash
+python3 build_web.py
+git commit -am "Update catalogue"
+git push
+```
+
+GitHub rebuilds on every push to `main`. The new version is live in under a minute.
+
+Two things about that setup:
+
+- `index.html` is a six-line redirect to `climate_health_catalogue.html`. GitHub Pages serves `index.html` at the site root, and without it the bare URL 404s. It holds no copy of the page, so it never goes stale.
+- **The repository is private. The published site is not.** Anyone with the URL can read every file at the repo root, including `catalogue.json` and the CSV register. Restricting a Pages site to logged-in users requires GitHub Enterprise Cloud. The URL is the only thing between the catalogue and the open web.
 
 ## Field standard
 
