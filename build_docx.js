@@ -56,7 +56,7 @@ const body = [
   p(cat.purpose, { size: 21, after: 220 }),
 
   p('How to use and maintain it', { bold: true, size: 24, before: 160, after: 120 }),
-  p('This document is the printable, editable version of the catalogue. The machine-readable register (climate_health_catalogue_register.csv) is the source of truth: one row per dataset, one column per field. The browsable web page is generated from that same file.', { size: 21, after: 120 }),
+  p('This document is the printable, editable version of the catalogue. The machine-readable register (climate_health_catalogue_register.csv) is the source: one row per dataset, one column per field. The browsable web page is generated from that same file.', { size: 21, after: 120 }),
   p('To add or change a dataset, edit the register, then rebuild the web page and this document. If you edit this document directly instead, copy the change back into the register so the three versions do not drift apart.', { size: 21, after: 120 }),
   p('Records marked "Draft" or "Action needed" are entries where the description still has to be confirmed with the organisation that holds the data. They are kept in the catalogue on purpose: an unconfirmed description that names the right contact is more useful than a blank.', { size: 21, after: 240 }),
 

@@ -1,10 +1,10 @@
 # Climate and Health Metadata Catalogue — how it fits together
 
-One source of truth, two ways of reading it.
+One source, two ways of reading it.
 
 | File | What it is | Who uses it |
 |---|---|---|
-| `catalogue.json` | The source of truth. One object per dataset, one key per field. | You, when adding or editing a record |
+| `catalogue.json` | The source. One object per dataset, one key per field. | You, when adding or editing a record |
 | `climate_health_catalogue_register.csv` | The same content as a flat table. Opens in Excel or Google Sheets; import into CKAN or Airtable. | Partner agencies filling in their own rows |
 | `climate_health_catalogue.html` | Single-file web page. Search, filter by project, domain and access, expand any record. No server, no build step, no internet needed. | Anyone who needs to look something up |
 | `climate_health_catalogue.docx` | Printable and editable. One page per dataset, a summary table, the open gaps, the field definitions and a change log. | The revewer report, and anyone who prefers paper |
@@ -38,10 +38,11 @@ git push
 
 GitHub rebuilds on every push to `main`. The new version is live in under a minute.
 
-Two things about that setup:
+Three things about that setup:
 
-- `index.html` is a six-line redirect to `climate_health_catalogue.html`. GitHub Pages serves `index.html` at the site root, and without it the bare URL 404s. It holds no copy of the page, so it never goes stale.
-- **The repository is private. The published site is not.** Anyone with the URL can read every file at the repo root, including `catalogue.json` and the CSV register. Restricting a Pages site to logged-in users requires GitHub Enterprise Cloud. The URL is the only thing between the catalogue and the open web.
+- **Only `docs/` is published.** Pages serves that folder and nothing above it, so `catalogue.json`, the CSV register, the DOCX and the build scripts stay in the repository and off the web. `build_web.py` writes the page into `docs/` and the register into the repo root — that split is the whole mechanism, so do not move files between the two without meaning it.
+- `docs/index.html` is a six-line redirect to `climate_health_catalogue.html`. GitHub Pages serves `index.html` at the site root, and without it the bare URL 404s. It holds no copy of the page, so it never goes stale.
+- **The repository is private. The published site is not.** Anyone with the URL can read anything in `docs/`. Restricting a Pages site to logged-in users requires GitHub Enterprise Cloud. The URL is the only thing between the published page and the open web — which is why internal material, such as the gaps register, is kept out of the page and left to the DOCX.
 
 ## Field standard
 

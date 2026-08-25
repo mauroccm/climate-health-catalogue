@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPSP Climate and Health Metadata Catalogue</title>
+<style>
+:root{
+ --ink:#16212B; --ink-2:#4A5A66; --ink-3:#7C8A94;
+ --paper:#EDF0F2; --card:#FFFFFF; --rule:#CBD5DB;
+ --open:#2E6B3E; --part:#9A6B15; --closed:#8C3A3A;
+ --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+ --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans);
+ -webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+a{color:#1F5F8C}
+
+/* ---- masthead ---- */
+header.top{border-bottom:2px solid var(--ink);padding:34px 0 18px;margin-bottom:26px}
+.eyebrow{font:11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+h1{font-size:clamp(26px,3.6vw,40px);line-height:1.08;margin:12px 0 6px;letter-spacing:-.02em;font-weight:700}
+.sub{max-width:62ch;color:var(--ink-2);margin:0 0 16px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;font:12px/1.4 var(--mono);color:var(--ink-3)}
+.purpose{max-width:70ch;border-left:3px solid var(--ink);padding-left:16px;margin:22px 0 0;color:var(--ink-2)}
+
+h2{font-size:13px;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;
+ color:var(--ink-3);margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+
+/* ---- projects ---- */
+.projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.pcard{background:var(--card);border:1px solid var(--rule);border-top:4px solid var(--c);padding:16px 18px}
+.pcode{font:11px/1 var(--mono);letter-spacing:.1em;color:var(--c);font-weight:700}
+.pcard h3{font-size:17px;margin:8px 0 8px;line-height:1.25}
+.pcard .q{color:var(--ink-2);margin:0 0 12px;font-size:14px}
+.pcard dl{margin:0;font-size:12.5px}
+.pcard dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:8px}
+.pcard dd{margin:2px 0 0}
+
+/* ---- controls ---- */
+.controls{position:sticky;top:0;z-index:5;background:var(--paper);
+ padding:12px 0 10px;border-bottom:1px solid var(--rule);margin-bottom:2px}
+#q{width:100%;padding:11px 13px;border:1px solid var(--ink);background:var(--card);
+ font:14px var(--mono);color:var(--ink)}
+#q:focus{outline:2px solid var(--ink);outline-offset:1px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;align-items:center}
+.fgroup{font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.f{font:11px var(--mono);letter-spacing:.06em;padding:5px 10px;border:1px solid var(--rule);
+ background:var(--card);color:var(--ink-2);cursor:pointer}
+.f:hover{border-color:var(--c,var(--ink))}
+.f.on{background:var(--c,var(--ink));border-color:var(--c,var(--ink));color:#fff}
+.tally{margin-left:auto;font:11px var(--mono);color:var(--ink-3)}
+
+/* ---- records ---- */
+.rec{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--d);margin-top:6px}
+.rec.hide{display:none}
+.rec-head{display:grid;grid-template-columns:74px minmax(200px,1.6fr) 150px 1fr 150px 18px;
+ gap:14px;align-items:center;padding:11px 14px;cursor:pointer}
+.rec-head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.id{font:11.5px var(--mono);color:var(--d);font-weight:700;letter-spacing:.02em}
+.ttl b{display:block;font-size:14.5px;font-weight:600;line-height:1.25}
+.ttl em{display:block;font-style:normal;font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+.who{font-size:12.5px;color:var(--ink-2)}
+.acc{font:10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;text-align:right}
+.acc-open{color:var(--open)} .acc-part{color:var(--part)} .acc-closed{color:var(--closed)}
+.chev{width:9px;height:9px;border-right:1.6px solid var(--ink-3);border-bottom:1.6px solid var(--ink-3);
+ transform:rotate(45deg);transition:transform .18s;justify-self:end;margin-top:-4px}
+.rec.open .chev{transform:rotate(-135deg);margin-top:3px}
+
+/* the resolution mark: how fine this dataset is in space and in time */
+.grain{display:grid;grid-template-columns:auto 1fr;gap:2px 6px;align-items:center}
+.glabel{font:9px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.bar{display:flex;gap:2px}
+.seg{width:9px;height:5px;background:var(--rule);display:block}
+.seg.on{background:var(--d)}
+
+.rec-body{display:none;padding:4px 14px 20px 14px;border-top:1px solid var(--rule)}
+.rec.open .rec-body{display:block}
+.lede{max-width:78ch;margin:14px 0 16px}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;
+ background:var(--rule);border:1px solid var(--rule);margin-bottom:16px}
+.spec{background:#F8FAFB;padding:9px 11px}
+.spec span{display:block;font:9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:3px}
+.spec code{font:12.5px var(--mono);color:var(--ink)}
+.cond{border-left:2px solid var(--rule);padding:2px 0 2px 13px;margin:0 0 14px}
+.cond.warn{border-left-color:var(--part)}
+.cond h4{font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);margin:0 0 4px}
+.cond p{margin:0;max-width:78ch;font-size:14px}
+.where{font-size:13px;margin-bottom:16px;word-break:break-word}
+.where span{font:9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-right:8px}
+dl.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px 24px;margin:0 0 16px}
+dl.grid dt{font:9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+dl.grid dd{margin:1px 0 0;font-size:13px}
+.proj{margin:0;font-size:12px;color:var(--ink-3)}
+.pill{display:inline-block;font:10.5px var(--mono);letter-spacing:.06em;padding:2px 7px;
+ background:var(--c);color:#fff;margin-left:5px}
+
+table.defs{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule)}
+table.defs th{text-align:left;vertical-align:top;width:210px;padding:9px 14px;
+ font:11.5px var(--mono);font-weight:600;border-bottom:1px solid var(--rule);color:var(--ink)}
+table.defs td{padding:9px 14px;border-bottom:1px solid var(--rule);font-size:13.5px;color:var(--ink-2)}
+footer{margin-top:50px;padding-top:16px;border-top:1px solid var(--rule);
+ font:11.5px var(--mono);color:var(--ink-3);line-height:1.7}
+
+@media (max-width:860px){
+ .rec-head{grid-template-columns:1fr auto;gap:6px}
+ .grain,.who{display:none}
+ .controls{position:static}
+}
+@media print{
+ .controls,.chev{display:none}
+ body{background:#fff;font-size:10pt}
+ .rec-body{display:block !important}
+ .rec{break-inside:avoid;border:1px solid #999}
+ .rec.hide{display:block}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style></head><body>
+<div class="wrap">
+
+<header class="top">
+ <p class="eyebrow">Institut Pasteur de São Paulo (IPSP) — Climate and Health Laboratory</p>
+ <h1>IPSP Climate and Health Metadata Catalogue</h1>
+ <p class="sub">Shared descriptions of the climate, environmental and health datasets used by the Climate and Health Laboratory</p>
+ <div class="meta">
+  <span>Version 0.2 (draft for review)</span><span>2026-08-19</span>
+  <span>26 datasets — 6 health · 6 climate · 8 environment · 3 reference · 3 derived</span>
+  <span>Maintainer: Mauro César Cafundó de Morais, Climate and Health Laboratory, IPSP</span>
+ </div>
+ <p class="purpose">The catalogue records, for every dataset the laboratory uses or needs, what it contains, its spatial and temporal resolution, how often it is updated, who holds it, and the conditions under which it can be shared. It does not centralise or open the data. Describing the data consistently is enough to make it usable, and removes the slowest part of the work: finding out what exists and who to ask.</p>
+</header>
+
+<h2>Research lines</h2>
+<div class="projects"><div class="pcard" style="--c:#B4531F">
+  <span class="pcode">YF-TMIN</span>
+  <h3>Yellow fever and minimum temperature anomalies</h3>
+  <p class="q">Do runs of unusually warm nights precede yellow fever transmission in the Brazilian Southeast?</p>
+  <dl><dt>Unit of analysis</dt><dd>Municipality x epidemiological week</dd><dt>Extent</dt><dd>Southeast Brazil (SP, MG, RJ, ES) - 1,668 municipalities, 2016-2025</dd></dl>
+ </div><div class="pcard" style="--c:#1F6F6B">
+  <span class="pcode">DENGUE-SUHI</span>
+  <h3>Dengue and urban heat islands in São Paulo</h3>
+  <p class="q">Does neighbourhood-level heat exposure explain where dengue clusters within the municipality of São Paulo?</p>
+  <dl><dt>Unit of analysis</dt><dd>Census sector or weather-station catchment x epidemiological week</dd><dt>Extent</dt><dd>Municipality of São Paulo, 2015-2024 (retrospective phase)</dd></dl>
+ </div><div class="pcard" style="--c:#4A5E23">
+  <span class="pcode">ACL-AMZ</span>
+  <h3>American cutaneous leishmaniasis and climate in the Amazon</h3>
+  <p class="q">Which climate and land-use conditions predict ACL incidence in the Amazonian biome?</p>
+  <dl><dt>Unit of analysis</dt><dd>Municipality x month</dd><dt>Extent</dt><dd>State of Pará, 2000-2024</dd></dl>
+ </div></div>
+
+<h2>Dataset register</h2>
+<div class="controls">
+ <input id="q" type="search" placeholder="Search datasets, variables, holders, limitations…" autocomplete="off">
+ <div class="filters">
+  <span class="fgroup">Project</span><button class="f" data-f="proj" data-v="YF-TMIN" style="--c:#B4531F">YF-TMIN</button><button class="f" data-f="proj" data-v="DENGUE-SUHI" style="--c:#1F6F6B">DENGUE-SUHI</button><button class="f" data-f="proj" data-v="ACL-AMZ" style="--c:#4A5E23">ACL-AMZ</button>
+  <span class="fgroup" style="margin-left:14px">Domain</span><button class="f" data-f="dom" data-v="Health" style="--c:#B4531F">Health</button><button class="f" data-f="dom" data-v="Climate" style="--c:#1F6F6B">Climate</button><button class="f" data-f="dom" data-v="Environment" style="--c:#4A5E23">Environment</button><button class="f" data-f="dom" data-v="Reference" style="--c:#46506B">Reference</button><button class="f" data-f="dom" data-v="Derived" style="--c:#6B3F6B">Derived</button>
+  <span class="fgroup" style="margin-left:14px">Access</span>
+  <button class="f" data-f="acc" data-v="open" style="--c:var(--open)">Open</button>
+  <button class="f" data-f="acc" data-v="part" style="--c:var(--part)">By request</button>
+  <button class="f" data-f="acc" data-v="closed" style="--c:var(--closed)">Restricted</button>
+  <span class="tally" id="tally"></span>
+ </div>
+</div>
+<div id="list"><article class="rec" data-domain="Health" data-projects="YF-TMIN" data-access="open" data-search="hea-001 sinan - yellow fever notifications sinan - febre amarela individual notification records of suspected and confirmed human yellow fever, including notification and symptom-onset dates, municipality of residence and of probable infection, case classification and outcome. notification date; symptom onset date; municipality of residence (ibge 6-digit); municipality of probable infection; final classification; evolution/death; vaccination status ministério da saúde / datasus (national); state and municipal surveillance secretariats feed the system health yf-tmin under-notification in low-access areas; municipality of probable infection is often missing or inferred; retrospective reclassification changes historical counts." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-001</span>
+  <span class="ttl"><b>SINAN - Yellow fever notifications</b><em>SINAN - Febre Amarela</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">Ministério da Saúde / DATASUS (national)</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Individual notification records of suspected and confirmed human yellow fever, including notification and symptom-onset dates, municipality of residence and of probable infection, case classification and outcome.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Individual record, geocoded to municipality of residence and of probable infection</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily (event dates), aggregated to epidemiological week</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous notification; public files consolidated annually, preliminary files updated more often</code></div>
+   <div class="spec"><span>Latency</span><code>Weeks to months for preliminary data; ~1 year for closed annual files</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Public de-identified files may be redistributed. Identified line-lists require a data-use agreement with the surveillance authority and ethics approval.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Under-notification in low-access areas; municipality of probable infection is often missing or inferred; retrospective reclassification changes historical counts.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://dadosabertos.saude.gov.br/" target="_blank" rel="noopener">https://dadosabertos.saude.gov.br/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Notification date; symptom onset date; municipality of residence (IBGE 6-digit); municipality of probable infection; final classification; evolution/death; vaccination status</dd></div><div class="kv"><dt>Producer</dt><dd>Sistema de Informação de Agravos de Notificação (SINAN)</dd></div><div class="kv"><dt>Contact</dt><dd>Portal de Dados Abertos do SUS - dadosabertos.saude.gov.br</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil (analysis subset: Southeast)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2001-present (yellow fever module)</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, DBC/DBF</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data (Lei de Acesso à Informação); attribution to MS/SVSA expected</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (6-digit in health files; divide 7-digit code by 10 to match)</dd></div><div class="kv"><dt>Personal data</dt><dd>Public files de-identified; municipality of residence retained</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Health" data-projects="DENGUE-SUHI" data-access="open" data-search="hea-002 sinan - dengue notifications sinan - dengue (arboviroses) individual notification records of suspected and confirmed dengue, with symptom-onset date, municipality of residence, laboratory results, serotype where typed, severity classification and outcome. symptom onset date; notification date; municipality and district of residence; serotype; laboratory confirmation; severity; hospitalisation; evolution ministério da saúde / datasus; municipal data flow through covisa in são paulo health dengue-suhi public geography stops at the municipality, which is too coarse for a heat-island analysis; serotype typed for a small subset of cases." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-002</span>
+  <span class="ttl"><b>SINAN - Dengue notifications</b><em>SINAN - Dengue (arboviroses)</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">Ministério da Saúde / DATASUS</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Individual notification records of suspected and confirmed dengue, with symptom-onset date, municipality of residence, laboratory results, serotype where typed, severity classification and outcome.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Individual record; public files resolve to municipality only</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily event dates, aggregated to epidemiological week</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous notification; annual consolidated files, weekly preliminary panels</code></div>
+   <div class="spec"><span>Latency</span><code>1-4 weeks for preliminary counts; ~1 year for closed files</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Public files redistributable. Sub-municipal geography is not in the public release and must be requested from COVISA.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Public geography stops at the municipality, which is too coarse for a heat-island analysis; serotype typed for a small subset of cases.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://dadosabertos.saude.gov.br/" target="_blank" rel="noopener">https://dadosabertos.saude.gov.br/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Symptom onset date; notification date; municipality and district of residence; serotype; laboratory confirmation; severity; hospitalisation; evolution</dd></div><div class="kv"><dt>Producer</dt><dd>Sistema de Informação de Agravos de Notificação (SINAN)</dd></div><div class="kv"><dt>Contact</dt><dd>Portal de Dados Abertos do SUS - dadosabertos.saude.gov.br</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil (analysis subset: municipality of São Paulo)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality (public files); census sector (restricted COVISA extract, see HEA-003)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2000-present</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, DBC/DBF</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data; attribution to MS/SVSA expected</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; epidemiological week</dd></div><div class="kv"><dt>Personal data</dt><dd>Public files de-identified</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Health" data-projects="DENGUE-SUHI" data-access="closed" data-search="hea-003 covisa arbovirus surveillance line-list, são paulo vigilância de arboviroses - covisa, município de são paulo municipal arbovirus surveillance records for são paulo with residential address geocoding, allowing cases to be assigned to census sectors, districts and weather-station catchments. includes the subset of cases with a laboratory-confirmed serotype. geocoded residence (point or census sector); symptom onset date; case classification; serotype for laboratory-typed cases; age; sex covisa - coordenadoria de vigilância em saúde, secretaria municipal da saúde de são paulo health dengue-suhi geocoding completeness varies by year and by neighbourhood; small-area counts require suppression rules." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-003</span>
+  <span class="ttl"><b>COVISA arbovirus surveillance line-list, São Paulo</b><em>Vigilância de arboviroses - COVISA, Município de São Paulo</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">COVISA - Coordenadoria de Vigilância em Saúde</span>
+  <span class="acc acc-closed">Restricted</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Municipal arbovirus surveillance records for São Paulo with residential address geocoding, allowing cases to be assigned to census sectors, districts and weather-station catchments. Includes the subset of cases with a laboratory-confirmed serotype.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Address point, aggregated to census sector or district for release</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily event dates</code></div>
+   <div class="spec"><span>Updated</span><code>Weekly internally; release schedule to be agreed</code></div>
+   <div class="spec"><span>Latency</span><code>To be confirmed</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Requires CEP/CONEP ethics approval, then a formal data-sharing agreement with COVISA. Aggregated outputs only; no address-level redistribution; publication drafts shared with COVISA before submission.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Geocoding completeness varies by year and by neighbourhood; small-area counts require suppression rules.</p></div>
+  <div class="where"><span>Where to get it</span> Not published; institutional request</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Geocoded residence (point or census sector); symptom onset date; case classification; serotype for laboratory-typed cases; age; sex</dd></div><div class="kv"><dt>Producer</dt><dd>COVISA, from SINAN municipal notifications</dd></div><div class="kv"><dt>Contact</dt><dd>To be confirmed - COVISA arbovirus surveillance division</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Municipality of São Paulo</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Census sector x epidemiological week</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2015-2024 requested for the retrospective phase</dd></div><div class="kv"><dt>Formats</dt><dd>CSV or database extract, to be agreed</dd></div><div class="kv"><dt>Licence</dt><dd>Not applicable - governed by the data-use agreement</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE census sector code (2022); epidemiological week</dd></div><div class="kv"><dt>Personal data</dt><dd>Yes - geocoded residence is potentially identifying. Aggregate to census sector before analysis and suppress small counts.</dd></div><div class="kv"><dt>Access</dt><dd>Restricted - by agreement</dd></div><div class="kv"><dt>Holding status</dt><dd>To be acquired - awaiting ethics approval, then confirmation with COVISA</dd></div><div class="kv"><dt>Record status</dt><dd>Draft - confirm with COVISA once ethics approval is granted</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Health" data-projects="ACL-AMZ" data-access="open" data-search="hea-004 sinan - american cutaneous leishmaniasis notifications sinan - leishmaniose tegumentar americana (lta) individual notification records of american cutaneous leishmaniasis, with clinical form, municipality of residence and of probable infection, diagnostic criteria, treatment and outcome. notification and onset dates; municipality of residence and probable infection; clinical form (cutaneous/mucosal); diagnostic criterion; treatment; evolution; occupation ministério da saúde / datasus; secretaria de estado da saúde do pará health acl-amz place of infection frequently differs from place of residence in a mobile rural population; under-diagnosis in areas with limited health-service access." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-004</span>
+  <span class="ttl"><b>SINAN - American cutaneous leishmaniasis notifications</b><em>SINAN - Leishmaniose Tegumentar Americana (LTA)</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">Ministério da Saúde / DATASUS</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Individual notification records of American cutaneous leishmaniasis, with clinical form, municipality of residence and of probable infection, diagnostic criteria, treatment and outcome.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Individual record, municipality of residence and of probable infection</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily event dates, aggregated to month</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous notification; annual consolidated files</code></div>
+   <div class="spec"><span>Latency</span><code>Months to ~1 year</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Public de-identified files may be redistributed with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Place of infection frequently differs from place of residence in a mobile rural population; under-diagnosis in areas with limited health-service access.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://dadosabertos.saude.gov.br/" target="_blank" rel="noopener">https://dadosabertos.saude.gov.br/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Notification and onset dates; municipality of residence and probable infection; clinical form (cutaneous/mucosal); diagnostic criterion; treatment; evolution; occupation</dd></div><div class="kv"><dt>Producer</dt><dd>Sistema de Informação de Agravos de Notificação (SINAN)</dd></div><div class="kv"><dt>Contact</dt><dd>Portal de Dados Abertos do SUS - dadosabertos.saude.gov.br</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil (analysis subset: State of Pará)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x month</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2000-2024 in the project; system runs 2001-present</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, DBC/DBF</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data; attribution to MS/SVSA expected</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (6-digit); month</dd></div><div class="kv"><dt>Personal data</dt><dd>Public files de-identified</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Health" data-projects="YF-TMIN DENGUE-SUHI" data-access="open" data-search="hea-005 si-pni immunisation coverage si-pni - cobertura vacinal doses administered and coverage estimates by municipality, age group and immunobiological, including yellow fever and dengue vaccines. used as a confounder and as denominator context. doses applied; immunobiological; dose number; age group; municipality; administration date ministério da saúde / datasus - programa nacional de imunizações health yf-tmin dengue-suhi coverage denominators rely on population projections that drifted from the 2022 census; campaign doses can be recorded late." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-005</span>
+  <span class="ttl"><b>SI-PNI immunisation coverage</b><em>SI-PNI - Cobertura vacinal</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 3/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">Ministério da Saúde / DATASUS - Programa Nacional de Imunizações</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Doses administered and coverage estimates by municipality, age group and immunobiological, including yellow fever and dengue vaccines. Used as a confounder and as denominator context.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Municipality (aggregate); individual dose records in the nominal system</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Monthly to annual</code></div>
+   <div class="spec"><span>Updated</span><code>Monthly consolidation</code></div>
+   <div class="spec"><span>Latency</span><code>1-3 months</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Coverage denominators rely on population projections that drifted from the 2022 census; campaign doses can be recorded late.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://dadosabertos.saude.gov.br/" target="_blank" rel="noopener">https://dadosabertos.saude.gov.br/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Doses applied; immunobiological; dose number; age group; municipality; administration date</dd></div><div class="kv"><dt>Producer</dt><dd>Sistema de Informação do Programa Nacional de Imunizações (SI-PNI)</dd></div><div class="kv"><dt>Contact</dt><dd>Portal de Dados Abertos do SUS - dadosabertos.saude.gov.br</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x month or year</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1994-present (varies by immunobiological)</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, DBC/DBF</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; month</dd></div><div class="kv"><dt>Personal data</dt><dd>No in the aggregate release</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - not yet acquired</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Health" data-projects="YF-TMIN" data-access="part" data-search="hea-006 non-human primate epizootic records vigilância de epizootias em primatas não humanos reports of sickness or death in non-human primates investigated for yellow fever, the earliest available signal of sylvatic virus circulation and therefore a candidate outcome ahead of human cases. event date; municipality; species; laboratory result; classification ministério da saúde / svsa; state surveillance; siss-geo (fiocruz) for citizen reports health yf-tmin strongly effort-dependent - reporting rises where surveillance teams are active and during known outbreaks, so absence is not evidence of absence." style="--d:#B4531F">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">HEA-006</span>
+  <span class="ttl"><b>Non-human primate epizootic records</b><em>Vigilância de epizootias em primatas não humanos</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">Ministério da Saúde / SVSA</span>
+  <span class="acc acc-part">By request</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Reports of sickness or death in non-human primates investigated for yellow fever, the earliest available signal of sylvatic virus circulation and therefore a candidate outcome ahead of human cases.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Event point or municipality</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily event dates</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous, with reporting peaks during outbreaks</code></div>
+   <div class="spec"><span>Latency</span><code>To be confirmed</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>To be confirmed with SVSA and Fiocruz.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Strongly effort-dependent - reporting rises where surveillance teams are active and during known outbreaks, so absence is not evidence of absence.</p></div>
+  <div class="where"><span>Where to get it</span> To be confirmed</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Event date; municipality; species; laboratory result; classification</dd></div><div class="kv"><dt>Producer</dt><dd>SINAN epizootics module and SISS-Geo</dd></div><div class="kv"><dt>Contact</dt><dd>To be confirmed</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil (analysis subset: Southeast)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x epidemiological week</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2007-present, coverage uneven before 2016</dd></div><div class="kv"><dt>Formats</dt><dd>CSV</dd></div><div class="kv"><dt>Licence</dt><dd>To be confirmed</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; epidemiological week</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Partly open - by request</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - not yet acquired</dd></div><div class="kv"><dt>Record status</dt><dd>Draft - to verify</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="YF-TMIN DENGUE-SUHI ACL-AMZ" data-access="open" data-search="cli-001 era5-land reanalysis - daily surface variables reanálise era5-land - variáveis diárias de superfície global land-surface climate reconstruction. the laboratory downloads minimum, mean and maximum 2 m air temperature, total precipitation, 2 m dew-point temperature, 10 m wind components and surface pressure, then reduces each to one value per municipality. tmin, tmean, tmax (2 m); total precipitation; dew-point temperature; 10 m u and v wind; surface pressure european centre for medium-range weather forecasts, through the copernicus climate data store climate yf-tmin dengue-suhi acl-amz temperatures arrive in kelvin (subtract 273.15). a reanalysis is a model product, not a measurement, and 9 km cannot resolve within-city heat contrasts - use cli-004 for that. coastal and steep-terrain municipalities are least reliable. the pará download was extended to dew-point temperature in august 2026; series before that date do not contain it." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-001</span>
+  <span class="ttl"><b>ERA5-Land reanalysis - daily surface variables</b><em>Reanálise ERA5-Land - variáveis diárias de superfície</em></span>
+  <span class="grain" title="Spatial grain 2/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">European Centre for Medium-Range Weather Forecasts</span>
+  <span class="acc acc-open">Open · registration</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Global land-surface climate reconstruction. The laboratory downloads minimum, mean and maximum 2 m air temperature, total precipitation, 2 m dew-point temperature, 10 m wind components and surface pressure, then reduces each to one value per municipality.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>~9 km (0.1 degree grid)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Hourly native; downloaded daily, aggregated to epidemiological week (YF, dengue) or month (ACL)</code></div>
+   <div class="spec"><span>Updated</span><code>Rolling, about 2-3 months behind real time</code></div>
+   <div class="spec"><span>Latency</span><code>2-3 months</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Raw data freely redistributable under the Copernicus licence. Derived municipality series may be published with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Temperatures arrive in Kelvin (subtract 273.15). A reanalysis is a model product, not a measurement, and 9 km cannot resolve within-city heat contrasts - use CLI-004 for that. Coastal and steep-terrain municipalities are least reliable. The Pará download was extended to dew-point temperature in August 2026; series before that date do not contain it.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://cds.climate.copernicus.eu/" target="_blank" rel="noopener">https://cds.climate.copernicus.eu/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Tmin, Tmean, Tmax (2 m); total precipitation; dew-point temperature; 10 m U and V wind; surface pressure</dd></div><div class="kv"><dt>Producer</dt><dd>ECMWF / Copernicus Climate Change Service (C3S)</dd></div><div class="kv"><dt>Contact</dt><dd>Copernicus Climate Data Store, registered account and API key</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Global land; downloaded for Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality (spatial mean by zonal statistic)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1950-2025</dd></div><div class="kv"><dt>Formats</dt><dd>NetCDF, GRIB</dd></div><div class="kv"><dt>Licence</dt><dd>Copernicus licence - free reuse with attribution</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (7-digit); date</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open - registration required</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span><span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="YF-TMIN" data-access="closed" data-search="cli-002 era5-land weekly climatological normals normais climatológicas semanais derivadas do era5-land pre-computed long-term weekly averages per municipality, used as the reference against which any week of any year is called normal or anomalous. weekly normals for tmin (1981-2010 and 1991-2020), tmax, precipitation, relative humidity and wind speed (1981-2010) ipsp climate and health laboratory (derived); era5-land upstream climate yf-tmin the choice of baseline changes the answer. the 1991-2020 normal is warmer and flags anomalies more conservatively than 1981-2010; state which baseline is used in every output." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-002</span>
+  <span class="ttl"><b>ERA5-Land weekly climatological normals</b><em>Normais climatológicas semanais derivadas do ERA5-Land</em></span>
+  <span class="grain" title="Spatial grain 2/5, temporal grain 4/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IPSP Climate and Health Laboratory (derived)</span>
+  <span class="acc acc-closed">Internal</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Pre-computed long-term weekly averages per municipality, used as the reference against which any week of any year is called normal or anomalous.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Derived from the ~9 km grid</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Weekly climatology (52 values per municipality)</code></div>
+   <div class="spec"><span>Updated</span><code>Recomputed when the baseline period changes (roughly every decade)</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Shareable with partners on request; publish alongside the paper.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>The choice of baseline changes the answer. The 1991-2020 normal is warmer and flags anomalies more conservatively than 1981-2010; state which baseline is used in every output.</p></div>
+  <div class="where"><span>Where to get it</span> Internal repository; see DER-001 for the published equivalents</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Weekly normals for Tmin (1981-2010 and 1991-2020), Tmax, precipitation, relative humidity and wind speed (1981-2010)</dd></div><div class="kv"><dt>Producer</dt><dd>IPSP, computed from ERA5-Land</dd></div><div class="kv"><dt>Contact</dt><dd>IPSP Climate and Health Laboratory</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x ISO week</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Baselines 1981-2010 and 1991-2020</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, Parquet</dd></div><div class="kv"><dt>Licence</dt><dd>To be assigned - CC BY 4.0 proposed</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; ISO week number</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Internal - shareable on request</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="YF-TMIN" data-access="open" data-search="cli-003 large-scale climate indices - enso, iod, pdo índices climáticos de larga escala single global time series describing el niño-southern oscillation, the indian ocean dipole and the pacific decadal oscillation, used as background drivers common to all municipalities. enso index; iod index; pdo index obtained through the infodengue sprint 2024-25 dataset; original indices from noaa and equivalent agencies climate yf-tmin no spatial contrast, so these can only explain shared year-to-year variation, not why one municipality differs from its neighbour." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-003</span>
+  <span class="ttl"><b>Large-scale climate indices - ENSO, IOD, PDO</b><em>Índices climáticos de larga escala</em></span>
+  <span class="grain" title="Spatial grain 1/5, temporal grain 4/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">Obtained through the InfoDengue Sprint 2024-25 dataset</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Single global time series describing El Niño-Southern Oscillation, the Indian Ocean Dipole and the Pacific Decadal Oscillation, used as background drivers common to all municipalities.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Not applicable</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Weekly</code></div>
+   <div class="spec"><span>Updated</span><code>Weekly to monthly depending on index</code></div>
+   <div class="spec"><span>Latency</span><code>Days to weeks</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>No spatial contrast, so these can only explain shared year-to-year variation, not why one municipality differs from its neighbour.</p></div>
+  <div class="where"><span>Where to get it</span> InfoDengue Sprint dataset; NOAA for originals</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>ENSO index; IOD index; PDO index</dd></div><div class="kv"><dt>Producer</dt><dd>NOAA and partner agencies, redistributed by InfoDengue</dd></div><div class="kv"><dt>Contact</dt><dd>InfoDengue project</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Global driver - no spatial variation</dd></div><div class="kv"><dt>Analysis unit</dt><dd>One value per week, applied nationally</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1992-present</dd></div><div class="kv"><dt>Formats</dt><dd>CSV</dd></div><div class="kv"><dt>Licence</dt><dd>Open, attribution to originating agency</dd></div><div class="kv"><dt>Linkage key</dt><dd>Date / epidemiological week</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="DENGUE-SUHI" data-access="part" data-search="cli-004 cge/cgesp municipal weather-station network, são paulo rede de estações meteorológicas do cge - município de são paulo the municipal network of automatic weather and rainfall stations operated by são paulo&#x27;s climate emergency management centre. this is the only source fine enough to separate hot from cool neighbourhoods inside the city, which is what the heat-island analysis needs. air temperature; relative humidity; rainfall; wind; station coordinates and installation history cge - centro de gerenciamento de emergências climáticas, prefeitura de são paulo climate dengue-suhi stations are unevenly distributed and periphery coverage is thinner than the centre, which risks under-measuring the hottest and most dengue-affected areas. record gaps and instrument changes need a station-history file." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-004</span>
+  <span class="ttl"><b>CGE/CGESP municipal weather-station network, São Paulo</b><em>Rede de estações meteorológicas do CGE - Município de São Paulo</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">CGE - Centro de Gerenciamento de Emergências Climáticas</span>
+  <span class="acc acc-part">By request</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">The municipal network of automatic weather and rainfall stations operated by São Paulo&#x27;s climate emergency management centre. This is the only source fine enough to separate hot from cool neighbourhoods inside the city, which is what the heat-island analysis needs.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Point stations; station density and catchment size to be documented</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Sub-hourly to hourly, aggregated to daily and weekly</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous, near real time on the public portal</code></div>
+   <div class="spec"><span>Latency</span><code>Minutes for the live portal; archive access to be confirmed</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>To be agreed with CGE at project start, together with archive access, the station history file and the citation terms. Expect attribution and possibly an acknowledgement or co-authorship arrangement for the historical archive.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Stations are unevenly distributed and periphery coverage is thinner than the centre, which risks under-measuring the hottest and most dengue-affected areas. Record gaps and instrument changes need a station-history file.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://www.cgesp.org/" target="_blank" rel="noopener">https://www.cgesp.org/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Air temperature; relative humidity; rainfall; wind; station coordinates and installation history</dd></div><div class="kv"><dt>Producer</dt><dd>CGE / CGESP</dd></div><div class="kv"><dt>Contact</dt><dd>To be confirmed - CGE technical division</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Municipality of São Paulo</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Station catchment or interpolated surface, joined to census sectors</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>To be confirmed; 2015-2024 requested</dd></div><div class="kv"><dt>Formats</dt><dd>To be confirmed - web portal, possible CSV export</dd></div><div class="kv"><dt>Licence</dt><dd>To be confirmed</dd></div><div class="kv"><dt>Linkage key</dt><dd>Station identifier with coordinates; date</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Partly open - archive by request</dd></div><div class="kv"><dt>Holding status</dt><dd>To be acquired - terms agreed at project start</dd></div><div class="kv"><dt>Record status</dt><dd>Draft - confirm with CGE at project start</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="YF-TMIN DENGUE-SUHI ACL-AMZ" data-access="open" data-search="cli-005 inmet automatic station network rede de estações automáticas do inmet the national network of automatic surface stations. its role here is validation: it is the ground measurement used to quantify the bias in the era5-land reanalysis (cli-001), municipality by municipality, with particular attention to pará where stations are sparse. air temperature (instantaneous, max, min); relative humidity; precipitation; wind; pressure; radiation inmet - instituto nacional de meteorologia climate yf-tmin dengue-suhi acl-amz very sparse in pará, so the bias estimate will have wide uncertainty over much of the acl study area, and that uncertainty should be reported rather than smoothed over. gaps and sensor changes are common and are not always flagged in the files." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-005</span>
+  <span class="ttl"><b>INMET automatic station network</b><em>Rede de estações automáticas do INMET</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">INMET - Instituto Nacional de Meteorologia</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">The national network of automatic surface stations. Its role here is validation: it is the ground measurement used to quantify the bias in the ERA5-Land reanalysis (CLI-001), municipality by municipality, with particular attention to Pará where stations are sparse.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Point stations</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Hourly</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous, hourly</code></div>
+   <div class="spec"><span>Latency</span><code>Hours</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Very sparse in Pará, so the bias estimate will have wide uncertainty over much of the ACL study area, and that uncertainty should be reported rather than smoothed over. Gaps and sensor changes are common and are not always flagged in the files.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://portal.inmet.gov.br/dadoshistoricos" target="_blank" rel="noopener">https://portal.inmet.gov.br/dadoshistoricos</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Air temperature (instantaneous, max, min); relative humidity; precipitation; wind; pressure; radiation</dd></div><div class="kv"><dt>Producer</dt><dd>INMET</dd></div><div class="kv"><dt>Contact</dt><dd>INMET data portal</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil - station network, sparse in the Amazon</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Station, matched to the containing municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2000-present for the automatic network</dd></div><div class="kv"><dt>Formats</dt><dd>CSV</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data, attribution to INMET</dd></div><div class="kv"><dt>Linkage key</dt><dd>Station code and coordinates; IBGE municipality code; date</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>To be acquired - bias quantification against ERA5-Land</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span><span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Climate" data-projects="ACL-AMZ" data-access="open" data-search="cli-006 ana hydrological station network (hidroweb) rede hidrológica da ana (hidroweb) river stage and discharge measured at gauging stations on amazonian rivers. this is the measured alternative to using extreme rainfall as a stand-in for flooding: a river level above its flood reference is an observation, not an inference. river stage (cm); discharge (m3/s); rainfall at co-located gauges; flood reference level ana - agência nacional de águas e saneamento básico climate acl-amz a gauge measures the river, not the floodplain. stations sit on main channels, so flooding in small tributary settlements - where acl transmission concentrates - may not register. assess coverage against the case municipalities before committing." style="--d:#1F6F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">CLI-006</span>
+  <span class="ttl"><b>ANA hydrological station network (HidroWeb)</b><em>Rede hidrológica da ANA (HidroWeb)</em></span>
+  <span class="grain" title="Spatial grain 4/5, temporal grain 5/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+  </span>
+  <span class="who">ANA - Agência Nacional de Águas e Saneamento Básico</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">River stage and discharge measured at gauging stations on Amazonian rivers. This is the measured alternative to using extreme rainfall as a stand-in for flooding: a river level above its flood reference is an observation, not an inference.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Point stations on river reaches</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Daily stage readings; sub-daily at telemetric stations</code></div>
+   <div class="spec"><span>Updated</span><code>Daily to near real time at telemetric stations</code></div>
+   <div class="spec"><span>Latency</span><code>Hours at telemetric stations; months for validated historical series</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>A gauge measures the river, not the floodplain. Stations sit on main channels, so flooding in small tributary settlements - where ACL transmission concentrates - may not register. Assess coverage against the case municipalities before committing.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://www.snirh.gov.br/hidroweb/" target="_blank" rel="noopener">https://www.snirh.gov.br/hidroweb/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>River stage (cm); discharge (m3/s); rainfall at co-located gauges; flood reference level</dd></div><div class="kv"><dt>Producer</dt><dd>ANA, with state and utility operators</dd></div><div class="kv"><dt>Contact</dt><dd>HidroWeb portal and the ANA API</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil - station network; denser on main Amazonian channels than on tributaries</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Station, assigned to downstream municipalities in its catchment</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Varies by station; many Amazonian records run from the 1970s</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, API</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data, attribution to ANA</dd></div><div class="kv"><dt>Linkage key</dt><dd>Station code with coordinates; IBGE municipality code of the catchment; date</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - under assessment for the inundation layer</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="YF-TMIN ACL-AMZ" data-access="open" data-search="env-001 modis vegetation greenness (ndvi) índice de vegetação (ndvi) - modis satellite measure of how green and dense vegetation is. two variants are held: a ~1 km series obtained through nasa appeears for the yellow fever work, and the 250 m mod13q1 product obtained through google earth engine for the leishmaniasis work. ndvi (maximum, mean, minimum, standard deviation per municipality) nasa - lp daac, accessed through appeears and google earth engine environment yf-tmin acl-amz persistent cloud in the amazon thins the usable composites. monthly ndvi is joined onto a weekly panel in the yf work, so the greenness value repeats across weeks within a month." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-001</span>
+  <span class="ttl"><b>MODIS vegetation greenness (NDVI)</b><em>Índice de vegetação (NDVI) - MODIS</em></span>
+  <span class="grain" title="Spatial grain 4/5, temporal grain 3/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">NASA - LP DAAC</span>
+  <span class="acc acc-open">Open · registration</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Satellite measure of how green and dense vegetation is. Two variants are held: a ~1 km series obtained through NASA AppEEARS for the yellow fever work, and the 250 m MOD13Q1 product obtained through Google Earth Engine for the leishmaniasis work.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>250 m (MOD13Q1) and ~1 km (AppEEARS extract)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>16-day composites, averaged to monthly</code></div>
+   <div class="spec"><span>Updated</span><code>Every 16 days</code></div>
+   <div class="spec"><span>Latency</span><code>Days to weeks</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Persistent cloud in the Amazon thins the usable composites. Monthly NDVI is joined onto a weekly panel in the YF work, so the greenness value repeats across weeks within a month.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://appeears.earthdatacloud.nasa.gov/" target="_blank" rel="noopener">https://appeears.earthdatacloud.nasa.gov/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>NDVI (maximum, mean, minimum, standard deviation per municipality)</dd></div><div class="kv"><dt>Producer</dt><dd>NASA MODIS (Terra/Aqua)</dd></div><div class="kv"><dt>Contact</dt><dd>NASA EARTHDATA account</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Global; downloaded for Brazil (YF) and Pará (ACL)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality (spatial statistic)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1999-2025 (YF extract); 2000-2024 (ACL extract)</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF, HDF, CSV extracts</dd></div><div class="kv"><dt>Licence</dt><dd>NASA open data, attribution requested</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; month</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open - registration required</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="YF-TMIN DENGUE-SUHI ACL-AMZ" data-access="open" data-search="env-002 mapbiomas land cover and land use mapbiomas - cobertura e uso da terra annual national land-cover map from landsat imagery. supplies forest cover and fragmentation for the yellow fever work, and areas of deforestation, secondary regrowth, agriculture and water for the leishmaniasis work. class areas per municipality-year: forest, secondary vegetation, agriculture, pasture, urban, water; derived fragmentation metrics mapbiomas project (brazilian civil-society and academic network) environment yf-tmin dengue-suhi acl-amz collections are reprocessed retrospectively, so a series downloaded today will not match one downloaded two years ago. always record the collection number." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-002</span>
+  <span class="ttl"><b>MapBiomas land cover and land use</b><em>MapBiomas - cobertura e uso da terra</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 2/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">MapBiomas project (Brazilian civil-society and academic network)</span>
+  <span class="acc acc-open">Open - registration for bulk download</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Annual national land-cover map from Landsat imagery. Supplies forest cover and fragmentation for the yellow fever work, and areas of deforestation, secondary regrowth, agriculture and water for the leishmaniasis work.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>30 m (Landsat); municipality statistics also distributed pre-summarised</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Annual</code></div>
+   <div class="spec"><span>Updated</span><code>Annual, with a new collection roughly every year</code></div>
+   <div class="spec"><span>Latency</span><code>About 1 year</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable under CC BY-SA with attribution to MapBiomas and the collection number.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Collections are reprocessed retrospectively, so a series downloaded today will not match one downloaded two years ago. Always record the collection number.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://brasil.mapbiomas.org/" target="_blank" rel="noopener">https://brasil.mapbiomas.org/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Class areas per municipality-year: forest, secondary vegetation, agriculture, pasture, urban, water; derived fragmentation metrics</dd></div><div class="kv"><dt>Producer</dt><dd>MapBiomas, Collection 9</dd></div><div class="kv"><dt>Contact</dt><dd>MapBiomas platform</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x year (percentage or hectares per class)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1985-2023 (Collection 9)</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF, XLSX municipality statistics</dd></div><div class="kv"><dt>Licence</dt><dd>CC BY-SA 4.0</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (7-digit); year</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open - registration for bulk download</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span><span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="ACL-AMZ" data-access="open" data-search="env-003 built-up surface index (ndbi) índice de área construída (ndbi) satellite measure of how built-up or bare a surface is, derived from landsat and sentinel-2 imagery in google earth engine and reduced to a yearly median per municipality. ndbi (yearly median per municipality) usgs (landsat) and esa (sentinel-2), accessed through google earth engine environment acl-amz the sensor changes in 2017, so the 30 m and 10 m halves of the series are not directly comparable. treat the break explicitly in any trend model." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-003</span>
+  <span class="ttl"><b>Built-up surface index (NDBI)</b><em>Índice de área construída (NDBI)</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 2/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">USGS (Landsat) and ESA (Sentinel-2)</span>
+  <span class="acc acc-open">Open · registration</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Satellite measure of how built-up or bare a surface is, derived from Landsat and Sentinel-2 imagery in Google Earth Engine and reduced to a yearly median per municipality.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>30 m for 2000-2016 (Landsat); 10 m for 2017-2024 (Sentinel-2)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Yearly median</code></div>
+   <div class="spec"><span>Updated</span><code>Recomputed on demand</code></div>
+   <div class="spec"><span>Latency</span><code>Days</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Derived series redistributable with attribution to USGS and ESA.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>The sensor changes in 2017, so the 30 m and 10 m halves of the series are not directly comparable. Treat the break explicitly in any trend model.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://earthengine.google.com/" target="_blank" rel="noopener">https://earthengine.google.com/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>NDBI (yearly median per municipality)</dd></div><div class="kv"><dt>Producer</dt><dd>IPSP, computed in Google Earth Engine</dd></div><div class="kv"><dt>Contact</dt><dd>Google Earth Engine account</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>State of Pará</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x year</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2000-2024</dd></div><div class="kv"><dt>Formats</dt><dd>CSV export from GEE</dd></div><div class="kv"><dt>Licence</dt><dd>Landsat public domain; Sentinel-2 Copernicus licence</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; year</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open - registration required</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="DENGUE-SUHI" data-access="open" data-search="env-004 land surface temperature for urban heat islands temperatura de superfície (lst) para ilhas de calor thermal satellite imagery giving surface temperature across the city, used to map the heat-island pattern between the sparse weather stations and to characterise every census sector. land surface temperature; derived surface urban heat island intensity per census sector usgs (landsat 8/9) and nasa (modis), accessed through google earth engine environment dengue-suhi surface temperature is not air temperature, and cloud cover removes many são paulo summer scenes - exactly the season the dengue analysis cares about. use as a spatial pattern to complement cli-004, not as a substitute for it." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-004</span>
+  <span class="ttl"><b>Land surface temperature for urban heat islands</b><em>Temperatura de superfície (LST) para ilhas de calor</em></span>
+  <span class="grain" title="Spatial grain 4/5, temporal grain 3/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">USGS (Landsat 8/9) and NASA (MODIS)</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Thermal satellite imagery giving surface temperature across the city, used to map the heat-island pattern between the sparse weather stations and to characterise every census sector.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>100 m thermal resampled to 30 m (Landsat); 1 km (MODIS)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>16-day revisit per satellite (about 8 days combined); MODIS twice daily</code></div>
+   <div class="spec"><span>Updated</span><code>Continuous with each overpass</code></div>
+   <div class="spec"><span>Latency</span><code>Days</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Surface temperature is not air temperature, and cloud cover removes many São Paulo summer scenes - exactly the season the dengue analysis cares about. Use as a spatial pattern to complement CLI-004, not as a substitute for it.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://earthengine.google.com/" target="_blank" rel="noopener">https://earthengine.google.com/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Land surface temperature; derived surface urban heat island intensity per census sector</dd></div><div class="kv"><dt>Producer</dt><dd>USGS / NASA</dd></div><div class="kv"><dt>Contact</dt><dd>Google Earth Engine account</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Municipality of São Paulo</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Census sector (zonal mean)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2013-present (Landsat 8/9); 2000-present (MODIS)</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF, CSV export</dd></div><div class="kv"><dt>Licence</dt><dd>Landsat public domain; NASA open data</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE census sector code (2022); date</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - not yet acquired</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="YF-TMIN" data-access="open" data-search="env-005 terrain elevation and slope (srtm) altimetria e declividade (srtm) digital elevation model used to derive mean slope and relief range per municipality, as context for temperature and for vector habitat. elevation; mean slope; relief range per municipality nasa, accessed through appeears environment yf-tmin a single 2000 survey; no change over time. a municipality mean hides the range that matters in mountainous terrain." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-005</span>
+  <span class="ttl"><b>Terrain elevation and slope (SRTM)</b><em>Altimetria e declividade (SRTM)</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 1/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">NASA</span>
+  <span class="acc acc-open">Open · registration</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Digital elevation model used to derive mean slope and relief range per municipality, as context for temperature and for vector habitat.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>90 m</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Static</code></div>
+   <div class="spec"><span>Updated</span><code>None - fixed layer</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>A single 2000 survey; no change over time. A municipality mean hides the range that matters in mountainous terrain.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://appeears.earthdatacloud.nasa.gov/" target="_blank" rel="noopener">https://appeears.earthdatacloud.nasa.gov/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Elevation; mean slope; relief range per municipality</dd></div><div class="kv"><dt>Producer</dt><dd>NASA SRTMGL3 v3 (90 m)</dd></div><div class="kv"><dt>Contact</dt><dd>NASA EARTHDATA account</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil (Southeast verified)</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Static - 2000 survey</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF</dd></div><div class="kv"><dt>Licence</dt><dd>NASA open data</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (7-digit)</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open - registration required</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="YF-TMIN" data-access="open" data-search="env-006 worldclim elevation (coarse backup) altimetria worldclim (reserva, baixa resolução) coarse global elevation layer held as a fallback. retained in the catalogue for completeness and explicitly not used in the models. elevation worldclim (university of california, davis) environment yf-tmin too coarse for municipality-level work - superseded by env-005 and not used in any model." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-006</span>
+  <span class="ttl"><b>WorldClim elevation (coarse backup)</b><em>Altimetria WorldClim (reserva, baixa resolução)</em></span>
+  <span class="grain" title="Spatial grain 1/5, temporal grain 1/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">WorldClim (University of California</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Coarse global elevation layer held as a fallback. Retained in the catalogue for completeness and explicitly not used in the models.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>~18 km (10 arc-minutes)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Static</code></div>
+   <div class="spec"><span>Updated</span><code>None</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Too coarse for municipality-level work - superseded by ENV-005 and not used in any model.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://www.worldclim.org/" target="_blank" rel="noopener">https://www.worldclim.org/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Elevation</dd></div><div class="kv"><dt>Producer</dt><dd>WorldClim v2.1</dd></div><div class="kv"><dt>Contact</dt><dd>worldclim.org</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Global</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Static - 1970-2000 baseline</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF</dd></div><div class="kv"><dt>Licence</dt><dd>CC BY-SA 4.0</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Held, not used</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="ACL-AMZ" data-access="open" data-search="env-007 human footprint index, hibr-10 índice de pegada humana - hibr-10 human impact on the brazilian environment at 10 m resolution (hibr-10): a national raster scoring human pressure on every 10 m cell from land cover, building density, and distance to major roads, railways and navigable waterways. it is the highest-resolution human footprint layer available for brazil. weighted human footprint score, 0-100 (rescaled from 0-10); component layers supplied separately zenodo deposit 10.5281/zenodo.15306587 (hamilton &amp; presotto, 2025) environment acl-amz nodata is coded 255, not null - set it explicitly or the zonal means are wrong. scores are rescaled 0-100 from the published 0-10 scale. the aggregation weights (40% land cover, 40% building density, 10% major roads, 5% railways, 5% waterways) are the authors&#x27; choices for primate conservation; the authors intend users to reweight for their own question, which for acl might mean raising forest-edge and waterway terms. a single snapshot, so no change over the 2000-2024 study period." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-007</span>
+  <span class="ttl"><b>Human footprint index, HIBR-10</b><em>Índice de pegada humana - HIBR-10</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 1/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">Zenodo deposit 10.5281/zenodo.15306587 (Hamilton &amp; Presotto</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Human Impact on the Brazilian Environment at 10 m resolution (HIBR-10): a national raster scoring human pressure on every 10 m cell from land cover, building density, and distance to major roads, railways and navigable waterways. It is the highest-resolution human footprint layer available for Brazil.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>10 m (86.5 billion cells), projected EPSG:5880 SIRGAS 2000 / Brazil Polyconic</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Static</code></div>
+   <div class="spec"><span>Updated</span><code>By release version; the file is HFI_Weighted_vx.tif, higher x is a later release</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Cite Presotto et al. 2025 and the Zenodo DOI. Confirm the deposit licence before publishing a derived or reweighted layer.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>NoData is coded 255, not null - set it explicitly or the zonal means are wrong. Scores are rescaled 0-100 from the published 0-10 scale. The aggregation weights (40% land cover, 40% building density, 10% major roads, 5% railways, 5% waterways) are the authors&#x27; choices for primate conservation; the authors intend users to reweight for their own question, which for ACL might mean raising forest-edge and waterway terms. A single snapshot, so no change over the 2000-2024 study period.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://zenodo.org/records/15306587" target="_blank" rel="noopener">https://zenodo.org/records/15306587</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Weighted human footprint score, 0-100 (rescaled from 0-10); component layers supplied separately</dd></div><div class="kv"><dt>Producer</dt><dd>Presotto A, Hamilton S, Izar P. A 10-meter resolution human footprint dataset to support biodiversity and conservation studies in Brazil. Scientific Data 2025;12:1754. doi:10.1038/s41597-025-06034-0</dd></div><div class="kv"><dt>Contact</dt><dd>Stuart Hamilton, East Carolina University (corresponding author)</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil, all biomes; clipped to State of Pará for this project</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality (zonal mean of the footprint score)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Static - built from 2023 Sentinel-2 land cover and post-2020 building footprints</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF (raster), Shapefile (input vectors)</dd></div><div class="kv"><dt>Licence</dt><dd>Article CC BY-NC-ND 4.0. Check the Zenodo deposit terms before redistributing any derived layer, since NC-ND would restrict it.</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code (7-digit)</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Environment" data-projects="ACL-AMZ" data-access="open" data-search="env-008 satellite surface-water and flood extent extensão de água superficial e inundação por satélite mapped water surface through time, from the jrc global surface water record and mapbiomas água. together these give seasonal and permanent water extent per municipality, which is the closest thing to a real inundation layer without new field data. water occurrence and seasonality; monthly water extent; flooded area per municipality-month european commission joint research centre (jrc); mapbiomas project environment acl-amz optical sensors cannot see water under forest canopy or through amazonian cloud, which is exactly when and where flooding matters. treat as a lower bound. if canopy flooding proves important, radar (sentinel-1) would be the next step, at a higher processing cost." style="--d:#4A5E23">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">ENV-008</span>
+  <span class="ttl"><b>Satellite surface-water and flood extent</b><em>Extensão de água superficial e inundação por satélite</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 3/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">European Commission Joint Research Centre (JRC)</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Mapped water surface through time, from the JRC Global Surface Water record and MapBiomas Água. Together these give seasonal and permanent water extent per municipality, which is the closest thing to a real inundation layer without new field data.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>30 m (both products)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Monthly (JRC history) and annual/monthly (MapBiomas Água)</code></div>
+   <div class="spec"><span>Updated</span><code>Annual reprocessing</code></div>
+   <div class="spec"><span>Latency</span><code>About 1 year</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution to each product.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Optical sensors cannot see water under forest canopy or through Amazonian cloud, which is exactly when and where flooding matters. Treat as a lower bound. If canopy flooding proves important, radar (Sentinel-1) would be the next step, at a higher processing cost.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://global-surface-water.appspot.com/" target="_blank" rel="noopener">https://global-surface-water.appspot.com/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Water occurrence and seasonality; monthly water extent; flooded area per municipality-month</dd></div><div class="kv"><dt>Producer</dt><dd>JRC Global Surface Water (Landsat); MapBiomas Água</dd></div><div class="kv"><dt>Contact</dt><dd>Google Earth Engine account; MapBiomas platform</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Global (JRC) and Brazil (MapBiomas Água); subset State of Pará</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x month (flooded area and share of municipal area)</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>1984-present (JRC); 1985-2023 (MapBiomas Água)</dd></div><div class="kv"><dt>Formats</dt><dd>GeoTIFF, Earth Engine image collections</dd></div><div class="kv"><dt>Licence</dt><dd>JRC open data (CC BY 4.0); MapBiomas CC BY-SA 4.0</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; year-month</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - under assessment for the inundation layer</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Reference" data-projects="YF-TMIN DENGUE-SUHI ACL-AMZ" data-access="open" data-search="ref-001 ibge municipal boundaries malha municipal - ibge the official municipal boundary geometry. every gridded climate and environmental layer is reduced to municipality values against this mesh, so it is the join that holds the whole catalogue together. municipality polygon; 7-digit ibge code; name; state; area ibge - instituto brasileiro de geografia e estatística reference yf-tmin dengue-suhi acl-amz municipalities are created and boundaries change between editions, so long time series need a fixed reference year stated up front." style="--d:#46506B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">REF-001</span>
+  <span class="ttl"><b>IBGE municipal boundaries</b><em>Malha municipal - IBGE</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 2/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IBGE - Instituto Brasileiro de Geografia e Estatística</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">The official municipal boundary geometry. Every gridded climate and environmental layer is reduced to municipality values against this mesh, so it is the join that holds the whole catalogue together.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Vector polygons, 1:250,000</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Annual boundary revision</code></div>
+   <div class="spec"><span>Updated</span><code>Annual</code></div>
+   <div class="spec"><span>Latency</span><code>Months</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Municipalities are created and boundaries change between editions, so long time series need a fixed reference year stated up front.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://www.ibge.gov.br/geociencias/" target="_blank" rel="noopener">https://www.ibge.gov.br/geociencias/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Municipality polygon; 7-digit IBGE code; name; state; area</dd></div><div class="kv"><dt>Producer</dt><dd>IBGE</dd></div><div class="kv"><dt>Contact</dt><dd>IBGE geoportal</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil - about 5,570 municipalities</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Annual editions; 2022 edition in use</dd></div><div class="kv"><dt>Formats</dt><dd>Shapefile, GeoPackage</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data, attribution to IBGE</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code - 7-digit here, 6-digit in health files (cod6 = cod7 // 10)</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span><span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span><span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article><article class="rec" data-domain="Reference" data-projects="DENGUE-SUHI" data-access="open" data-search="ref-002 ibge 2022 census - sector-level indicators censo 2022 - setores censitários population, income, household density and sanitation indicators at census-sector level, the finest official social geography available. supplies both the denominator and the main confounders for the são paulo heat-island analysis. resident population; household density; income; water supply; sewerage connection; waste collection; sector polygon ibge reference dengue-suhi sector boundaries changed between 2010 and 2022, so pre-2022 dengue years cannot be joined to 2022 sectors without an areal-interpolation step. a single snapshot cannot capture change across the 2015-2024 study window." style="--d:#46506B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">REF-002</span>
+  <span class="ttl"><b>IBGE 2022 census - sector-level indicators</b><em>Censo 2022 - setores censitários</em></span>
+  <span class="grain" title="Spatial grain 5/5, temporal grain 2/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IBGE</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Population, income, household density and sanitation indicators at census-sector level, the finest official social geography available. Supplies both the denominator and the main confounders for the São Paulo heat-island analysis.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Census sector (roughly 300 households)</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Decennial</code></div>
+   <div class="spec"><span>Updated</span><code>Every 10 years, with staged releases of each indicator set</code></div>
+   <div class="spec"><span>Latency</span><code>1-3 years per release wave</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Redistributable with attribution. Small-count suppression rules already applied by IBGE.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Sector boundaries changed between 2010 and 2022, so pre-2022 dengue years cannot be joined to 2022 sectors without an areal-interpolation step. A single snapshot cannot capture change across the 2015-2024 study window.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://www.ibge.gov.br/estatisticas/sociais/populacao/" target="_blank" rel="noopener">https://www.ibge.gov.br/estatisticas/sociais/populacao/</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Resident population; household density; income; water supply; sewerage connection; waste collection; sector polygon</dd></div><div class="kv"><dt>Producer</dt><dd>IBGE, Censo Demográfico 2022</dd></div><div class="kv"><dt>Contact</dt><dd>IBGE data portal</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil; subset municipality of São Paulo</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Census sector</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2022 reference year</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, Shapefile, GeoPackage</dd></div><div class="kv"><dt>Licence</dt><dd>Open government data, attribution to IBGE</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE census sector code (2022)</dd></div><div class="kv"><dt>Personal data</dt><dd>No - aggregated to sector</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>Candidate - not yet acquired</dd></div><div class="kv"><dt>Record status</dt><dd>Draft</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#1F6F6B">DENGUE-SUHI</span></p>
+ </div>
+</article><article class="rec" data-domain="Reference" data-projects="YF-TMIN" data-access="open" data-search="ref-003 static municipal environmental context contexto ambiental municipal estático a fixed table of köppen climate class, biome and altitude per municipality, used as unchanging context in the models. köppen class; biome; altitude infodengue sprint 2024-25 environmental table reference yf-tmin one class per municipality flattens real internal variation in large municipalities." style="--d:#46506B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">REF-003</span>
+  <span class="ttl"><b>Static municipal environmental context</b><em>Contexto ambiental municipal estático</em></span>
+  <span class="grain" title="Spatial grain 3/5, temporal grain 1/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">InfoDengue Sprint 2024-25 environmental table</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">A fixed table of Köppen climate class, biome and altitude per municipality, used as unchanging context in the models.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Municipality level as supplied</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Static</code></div>
+   <div class="spec"><span>Updated</span><code>None</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Confirm the InfoDengue redistribution terms before republishing.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>One class per municipality flattens real internal variation in large municipalities.</p></div>
+  <div class="where"><span>Where to get it</span> InfoDengue Sprint dataset</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Köppen class; biome; altitude</dd></div><div class="kv"><dt>Producer</dt><dd>InfoDengue project</dd></div><div class="kv"><dt>Contact</dt><dd>InfoDengue project</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Static</dd></div><div class="kv"><dt>Formats</dt><dd>CSV</dd></div><div class="kv"><dt>Licence</dt><dd>To be confirmed</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Derived" data-projects="YF-TMIN" data-access="open" data-search="der-001 municipality zonal statistics and climate anomaly indicators estatísticas zonais e indicadores de anomalia climática the published municipality-level climate summaries and anomaly indicators produced by the laboratory, deposited on zenodo so that others can reuse the processing rather than repeat it. municipality zonal statistics for the era5-land variables; anomaly indicators against the weekly normals ipsp climate and health laboratory; hosted by zenodo derived yf-tmin fixed at the deposit date; re-run against current era5-land for recent years." style="--d:#6B3F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">DER-001</span>
+  <span class="ttl"><b>Municipality zonal statistics and climate anomaly indicators</b><em>Estatísticas zonais e indicadores de anomalia climática</em></span>
+  <span class="grain" title="Spatial grain 2/5, temporal grain 4/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IPSP Climate and Health Laboratory</span>
+  <span class="acc acc-open">Open</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">The published municipality-level climate summaries and anomaly indicators produced by the laboratory, deposited on Zenodo so that others can reuse the processing rather than repeat it.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Derived from the ~9 km ERA5-Land grid</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Weekly</code></div>
+   <div class="spec"><span>Updated</span><code>On new deposit version</code></div>
+   <div class="spec"><span>Latency</span><code>Not applicable</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Openly citable by DOI. Cite the deposit version used.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Fixed at the deposit date; re-run against current ERA5-Land for recent years.</p></div>
+  <div class="where"><span>Where to get it</span> <a href="https://zenodo.org/records/10036212 and https://zenodo.org/records/18787683" target="_blank" rel="noopener">https://zenodo.org/records/10036212 and https://zenodo.org/records/18787683</a></div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Municipality zonal statistics for the ERA5-Land variables; anomaly indicators against the weekly normals</dd></div><div class="kv"><dt>Producer</dt><dd>IPSP</dd></div><div class="kv"><dt>Contact</dt><dd>IPSP Climate and Health Laboratory</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Brazil</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x week</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>Matches the ERA5-Land series</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, Parquet</dd></div><div class="kv"><dt>Licence</dt><dd>As stated on the Zenodo record</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; ISO week</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Open</dd></div><div class="kv"><dt>Holding status</dt><dd>In use - published</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Derived" data-projects="YF-TMIN" data-access="closed" data-search="der-002 yellow fever exposure indicators indicadores de exposição - febre amarela exposure variables built from minimum temperature rather than downloaded: warm-night counts, warm spells and anomalies against the weekly normals. these are the actual model inputs. days with tmin above 17 c; runs of 7 or more consecutive warm days in april-september; tmin anomaly against the 1981-2010 and 1991-2020 normals; extreme-rainfall weeks above the 99th percentile ipsp climate and health laboratory derived yf-tmin thresholds (17 c, 7 days, 99th percentile) are analytical choices, not properties of the data - record the version used with every result. flooding has no dataset and is approximated by extreme rainfall." style="--d:#6B3F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">DER-002</span>
+  <span class="ttl"><b>Yellow fever exposure indicators</b><em>Indicadores de exposição - febre amarela</em></span>
+  <span class="grain" title="Spatial grain 2/5, temporal grain 4/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IPSP Climate and Health Laboratory</span>
+  <span class="acc acc-closed">Internal</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Exposure variables built from minimum temperature rather than downloaded: warm-night counts, warm spells and anomalies against the weekly normals. These are the actual model inputs.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Derived from ERA5-Land municipality means</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Weekly</code></div>
+   <div class="spec"><span>Updated</span><code>Recomputed when ERA5-Land is refreshed</code></div>
+   <div class="spec"><span>Latency</span><code>Follows CLI-001</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Shareable with collaborators now; deposit publicly at acceptance.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>Thresholds (17 C, 7 days, 99th percentile) are analytical choices, not properties of the data - record the version used with every result. Flooding has no dataset and is approximated by extreme rainfall.</p></div>
+  <div class="where"><span>Where to get it</span> Internal repository</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Days with Tmin above 17 C; runs of 7 or more consecutive warm days in April-September; Tmin anomaly against the 1981-2010 and 1991-2020 normals; extreme-rainfall weeks above the 99th percentile</dd></div><div class="kv"><dt>Producer</dt><dd>IPSP</dd></div><div class="kv"><dt>Contact</dt><dd>IPSP Climate and Health Laboratory</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>Southeast Brazil - 1,668 municipalities</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x epidemiological week</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2016-2025 for the modelling window</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, Parquet</dd></div><div class="kv"><dt>Licence</dt><dd>CC BY 4.0 proposed on publication</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; ISO week</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Internal - to be published with the paper</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#B4531F">YF-TMIN</span></p>
+ </div>
+</article><article class="rec" data-domain="Derived" data-projects="ACL-AMZ" data-access="closed" data-search="der-003 leishmaniasis climate and vector indicators indicadores climáticos e vetoriais - leishmaniose indicators built from temperature, rainfall and humidity for the acl models, including a simple sand-fly population simulation. relative humidity is computed from era5-land dew-point using the same method as the yellow fever work. relative humidity derived from 2 m dew-point and air temperature; seasonal temperature, rainfall and humidity anomalies (2000-2024 baseline); accumulated warmth above 10 c; favourable-infection flag (22-28 c and rainfall above 50 mm); simulated sand-fly density; 1-8 month lags; 3-month rolling mean of case counts ipsp climate and health laboratory derived acl-amz the favourable-infection thresholds and the vector model are assumptions carried into every downstream result; document and sensitivity-test them. the 2000-2024 anomaly baseline is the study period itself, which shrinks apparent trends. humidity is derived, not measured - validate against inmet stations (cli-005)." style="--d:#6B3F6B">
+ <header class="rec-head" tabindex="0" role="button" aria-expanded="false">
+  <span class="id">DER-003</span>
+  <span class="ttl"><b>Leishmaniasis climate and vector indicators</b><em>Indicadores climáticos e vetoriais - leishmaniose</em></span>
+  <span class="grain" title="Spatial grain 2/5, temporal grain 3/5">
+    <span class="glabel">space</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+    <span class="glabel">time</span><span class="bar"><i class="seg on"></i><i class="seg on"></i><i class="seg on"></i><i class="seg"></i><i class="seg"></i></span>
+  </span>
+  <span class="who">IPSP Climate and Health Laboratory</span>
+  <span class="acc acc-closed">Internal</span>
+  <span class="chev" aria-hidden="true"></span>
+ </header>
+ <div class="rec-body">
+  <p class="lede">Indicators built from temperature, rainfall and humidity for the ACL models, including a simple sand-fly population simulation. Relative humidity is computed from ERA5-Land dew-point using the same method as the yellow fever work.</p>
+  <div class="specs">
+   <div class="spec"><span>Spatial resolution</span><code>Derived from ERA5-Land municipality means</code></div>
+   <div class="spec"><span>Temporal resolution</span><code>Monthly</code></div>
+   <div class="spec"><span>Updated</span><code>Recomputed on demand</code></div>
+   <div class="spec"><span>Latency</span><code>Follows CLI-001</code></div>
+  </div>
+  <div class="cond"><h4>Conditions for sharing</h4><p>Shareable with collaborators now; deposit publicly at acceptance.</p></div>
+  <div class="cond warn"><h4>Known limitations</h4><p>The favourable-infection thresholds and the vector model are assumptions carried into every downstream result; document and sensitivity-test them. The 2000-2024 anomaly baseline is the study period itself, which shrinks apparent trends. Humidity is derived, not measured - validate against INMET stations (CLI-005).</p></div>
+  <div class="where"><span>Where to get it</span> Internal repository</div>
+  <dl class="grid"><div class="kv"><dt>Key variables</dt><dd>Relative humidity derived from 2 m dew-point and air temperature; seasonal temperature, rainfall and humidity anomalies (2000-2024 baseline); accumulated warmth above 10 C; favourable-infection flag (22-28 C and rainfall above 50 mm); simulated sand-fly density; 1-8 month lags; 3-month rolling mean of case counts</dd></div><div class="kv"><dt>Producer</dt><dd>IPSP</dd></div><div class="kv"><dt>Contact</dt><dd>IPSP Climate and Health Laboratory</dd></div><div class="kv"><dt>Spatial coverage</dt><dd>State of Pará</dd></div><div class="kv"><dt>Analysis unit</dt><dd>Municipality x month</dd></div><div class="kv"><dt>Temporal coverage</dt><dd>2000-2024</dd></div><div class="kv"><dt>Formats</dt><dd>CSV, Parquet</dd></div><div class="kv"><dt>Licence</dt><dd>CC BY 4.0 proposed on publication</dd></div><div class="kv"><dt>Linkage key</dt><dd>IBGE municipality code; year-month</dd></div><div class="kv"><dt>Personal data</dt><dd>No</dd></div><div class="kv"><dt>Access</dt><dd>Internal - to be published with the paper</dd></div><div class="kv"><dt>Holding status</dt><dd>In use</dd></div><div class="kv"><dt>Record status</dt><dd>Verified</dd></div></dl>
+  <p class="proj">Used by <span class="pill" style="--c:#4A5E23">ACL-AMZ</span></p>
+ </div>
+</article></div>
+
+<h2>What each field means</h2>
+<table class="defs"><tr><th>Catalogue ID</th><td>Stable identifier. Prefix marks the domain: HEA health, CLI climate, ENV environment, REF reference geography, DER derived by the laboratory.</td></tr><tr><th>Title</th><td>The name the dataset is known by, in English and Portuguese.</td></tr><tr><th>Domain</th><td>Health, Climate, Environment, Reference or Derived.</td></tr><tr><th>Projects</th><td>Which of the three research lines use this dataset. Datasets used by more than one project are the reason the catalogue is shared rather than per-project.</td></tr><tr><th>What it contains</th><td>Plain-language description of the contents, written for someone who has not used the dataset.</td></tr><tr><th>Key variables</th><td>The specific fields or bands actually used.</td></tr><tr><th>Who holds it</th><td>The organisation that controls access, which is not always the organisation that produced it.</td></tr><tr><th>Producer</th><td>The system or programme that generates the data.</td></tr><tr><th>Contact</th><td>Where to ask. A portal, a named division, or an account type.</td></tr><tr><th>Spatial coverage</th><td>The geographic extent held.</td></tr><tr><th>Native spatial resolution</th><td>The pixel size, station spacing or record granularity as distributed.</td></tr><tr><th>Analysis unit</th><td>What one row becomes after processing. Almost everything here is reduced to one value per municipality or census sector.</td></tr><tr><th>Temporal coverage</th><td>The period available.</td></tr><tr><th>Temporal resolution</th><td>The time step as distributed, and the step it is aggregated to.</td></tr><tr><th>Update frequency</th><td>How often new data appear.</td></tr><tr><th>Latency</th><td>How far behind real time the most recent usable record sits. This is the field that decides whether a dataset can support an operational decision.</td></tr><tr><th>Access</th><td>Open, open with registration, by request, or restricted by agreement.</td></tr><tr><th>Access URL</th><td>Where to obtain it.</td></tr><tr><th>Formats</th><td>Distribution formats.</td></tr><tr><th>Licence</th><td>Reuse terms.</td></tr><tr><th>Sharing conditions</th><td>What must be in place before the data can be used or passed on: agreements, ethics approval, attribution, suppression rules, pre-publication review.</td></tr><tr><th>Personal data</th><td>Whether the records identify or could identify individuals, and what must be done about it.</td></tr><tr><th>Linkage key</th><td>The field that joins this dataset to the others. Recording it is what makes the catalogue operational rather than descriptive.</td></tr><tr><th>Known limitations</th><td>What the dataset cannot tell you, stated before someone discovers it during analysis.</td></tr><tr><th>Holding status</th><td>In use, held but unused, to be acquired, or a candidate under consideration.</td></tr><tr><th>Steward</th><td>Who at IPSP is answerable for this record.</td></tr><tr><th>Record status</th><td>Verified, draft, or action needed. Draft records are entries where the description still needs confirmation from the holder.</td></tr></table>
+
+<footer>
+ Maintained by Mauro César Cafundó de Morais, Climate and Health Laboratory, IPSP.<br>
+ Source: <code>climate_health_catalogue_register.csv</code>. This page is generated from it — edit the register, rebuild the page.<br>
+ Health data: Portal de Dados Abertos do SUS · <a href="https://dadosabertos.saude.gov.br/">dadosabertos.saude.gov.br</a><br>
+ Climate data: Copernicus Climate Data Store (CDS) · <a href="https://climate.copernicus.eu/">climate.copernicus.eu</a>
+</footer>
+</div>
+
+<script>
+(function(){
+ var recs=[].slice.call(document.querySelectorAll('.rec')),
+     q=document.getElementById('q'), tally=document.getElementById('tally'),
+     state={proj:new Set(),dom:new Set(),acc:new Set()};
+
+ function apply(){
+  var term=q.value.trim().toLowerCase(), n=0;
+  recs.forEach(function(r){
+   var ok = (!term || r.dataset.search.indexOf(term)>-1)
+     && (!state.proj.size || r.dataset.projects.split(' ').some(function(p){return state.proj.has(p);}))
+     && (!state.dom.size  || state.dom.has(r.dataset.domain))
+     && (!state.acc.size  || state.acc.has(r.dataset.access));
+   r.classList.toggle('hide',!ok); if(ok) n++;
+  });
+  tally.textContent = n===recs.length ? recs.length+' datasets' : n+' of '+recs.length+' datasets';
+ }
+
+ q.addEventListener('input',apply);
+ document.querySelectorAll('.f').forEach(function(b){
+  b.addEventListener('click',function(){
+   var s=state[b.dataset.f], v=b.dataset.v;
+   if(s.has(v)){s.delete(v);b.classList.remove('on');} else {s.add(v);b.classList.add('on');}
+   apply();
+  });
+ });
+
+ function toggle(r){
+  var open=r.classList.toggle('open');
+  r.querySelector('.rec-head').setAttribute('aria-expanded',open);
+ }
+ recs.forEach(function(r){
+  var h=r.querySelector('.rec-head');
+  h.addEventListener('click',function(){toggle(r);});
+  h.addEventListener('keydown',function(ev){
+   if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();toggle(r);}
+  });
+ });
+ apply();
+})();
+</script>
+</body></html>

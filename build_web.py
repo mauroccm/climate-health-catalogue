@@ -4,7 +4,9 @@ import json, csv, html, pathlib
 
 HERE = pathlib.Path(__file__).resolve().parent
 SRC = HERE / "catalogue.json"
-OUT = HERE
+OUT = HERE            # register and source files: in the repo, not on the web
+WEB = HERE / "docs"   # what GitHub Pages publishes, and nothing else
+WEB.mkdir(exist_ok=True)
 
 D = json.loads(SRC.read_text(encoding="utf-8"))
 # "gaps" is deliberately not read here: it is internal review material and must not
@@ -355,6 +357,6 @@ footer{{margin-top:50px;padding-top:16px;border-top:1px solid var(--rule);
 </script>
 </body></html>'''
 
-(OUT / "climate_health_catalogue.html").write_text(HTML, encoding="utf-8")
+(WEB / "climate_health_catalogue.html").write_text(HTML, encoding="utf-8")
 print("CSV rows:", len(sets))
 print("HTML bytes:", len(HTML))
