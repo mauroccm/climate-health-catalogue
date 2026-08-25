@@ -7,7 +7,9 @@ SRC = HERE / "catalogue.json"
 OUT = HERE
 
 D = json.loads(SRC.read_text(encoding="utf-8"))
-cat, sets, gaps, fields = D["catalogue"], D["datasets"], D["gaps"], D["field_definitions"]
+# "gaps" is deliberately not read here: it is internal review material and must not
+# reach the public page. It stays in catalogue.json and is rendered by build_docx.js.
+cat, sets, fields = D["catalogue"], D["datasets"], D["field_definitions"]
 
 # Spatial / temporal granularity on a 5-step coarse-to-fine scale, used by the
 # resolution mark in the HTML and by the "match" question the catalogue exists to answer.
@@ -142,18 +144,6 @@ dom_filters = "".join(
     f'<button class="f" data-f="dom" data-v="{d}" style="--c:{c}">{d}</button>'
     for d, c in DOMAIN_COLOUR.items())
 
-GAP_TONE = {"Resolved": "done", "In progress": "wip", "Planned": "todo"}
-gap_rows = "".join(
-    f'<li class="g-{GAP_TONE[g["status"]]}">'
-    f'<div class="ghead"><h4>{e(g["gap"])}</h4><span class="gstat">{e(g["status"])}</span></div>'
-    f'<p>{e(g["detail"])}</p>'
-    f'<p class="act"><span>{"What was done" if g["status"] == "Resolved" else "Next step"}</span> '
-    f'{e(g["action"])}</p>'
-    f'<p class="gown">{e(g["owner"])} &#183; {e(g["when"])}</p></li>'
-    for g in gaps)
-gap_tally = " &#183; ".join(f'{sum(1 for g in gaps if g["status"] == k)} {k.lower()}'
-                       for k in ["Resolved", "In progress", "Planned"])
-
 field_rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in fields)
 
 counts = {}
@@ -258,27 +248,6 @@ dl.grid dd{{margin:1px 0 0;font-size:13px}}
 .pill{{display:inline-block;font:10.5px var(--mono);letter-spacing:.06em;padding:2px 7px;
  background:var(--c);color:#fff;margin-left:5px}}
 
-/* ---- gaps ---- */
-ol.gaps{{list-style:none;counter-reset:g;padding:0;margin:0}}
-ol.gaps li{{counter-increment:g;background:var(--card);border:1px solid var(--rule);
- padding:15px 18px 15px 52px;position:relative;margin-bottom:6px}}
-ol.gaps li::before{{content:counter(g,decimal-leading-zero);position:absolute;left:18px;top:16px;
- font:12px var(--mono);color:var(--ink-3);font-weight:700}}
-ol.gaps li{{border-left:3px solid var(--rule)}}
-.g-done{{border-left-color:var(--open) !important}}
-.g-wip{{border-left-color:var(--part) !important}}
-.g-todo{{border-left-color:var(--ink-3) !important}}
-.ghead{{display:flex;align-items:baseline;gap:12px;margin-bottom:5px}}
-.gstat{{margin-left:auto;font:9.5px var(--mono);letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}}
-.g-done .gstat{{color:var(--open)}} .g-wip .gstat{{color:var(--part)}} .g-todo .gstat{{color:var(--ink-3)}}
-.g-done .act span{{color:var(--open)}} .g-todo .act span{{color:var(--ink-3)}}
-.gown{{margin:8px 0 0 !important;font:10.5px var(--mono) !important;color:var(--ink-3) !important}}
-.tally2{{float:right;font:11px var(--mono);letter-spacing:0;text-transform:none;color:var(--ink-3)}}
-ol.gaps h4{{margin:0;font-size:15px}}
-ol.gaps p{{margin:0 0 6px;color:var(--ink-2);font-size:14px;max-width:80ch}}
-.act{{font-size:13px !important;color:var(--ink) !important}}
-.act span{{font:9.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--part);margin-right:8px}}
-
 table.defs{{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--rule)}}
 table.defs th{{text-align:left;vertical-align:top;width:210px;padding:9px 14px;
  font:11.5px var(--mono);font-weight:600;border-bottom:1px solid var(--rule);color:var(--ink)}}
@@ -331,9 +300,6 @@ footer{{margin-top:50px;padding-top:16px;border-top:1px solid var(--rule);
  </div>
 </div>
 <div id="list">{"".join(row(d) for d in sets)}</div>
-
-<h2>Gaps and next steps <span class="tally2">{gap_tally}</span></h2>
-<ol class="gaps">{gap_rows}</ol>
 
 <h2>What each field means</h2>
 <table class="defs">{field_rows}</table>
