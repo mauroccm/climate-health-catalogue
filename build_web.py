@@ -340,8 +340,9 @@ footer{{margin-top:50px;padding-top:16px;border-top:1px solid var(--rule);
 
 <footer>
  Maintained by {e(cat["maintainer"])}.<br>
- Source of truth: <code>climate_health_catalogue_register.csv</code>. This page is generated from it — edit the register, rebuild the page.<br>
- Health data: Portal de Dados Abertos do SUS · dadosabertos.saude.gov.br
+ Source: <code>climate_health_catalogue_register.csv</code>. This page is generated from it — edit the register, rebuild the page.<br>
+ Health data: Portal de Dados Abertos do SUS · <a href="https://dadosabertos.saude.gov.br/">dadosabertos.saude.gov.br</a><br>
+ Climate data: Copernicus Climate Data Store (CDS) · <a href="https://climate.copernicus.eu/">climate.copernicus.eu</a>
 </footer>
 </div>
 
