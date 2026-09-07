@@ -7,7 +7,8 @@ One source, two ways of reading it.
 | `catalogue.json` | The source. One object per dataset, one key per field. | You, when adding or editing a record |
 | `climate_health_catalogue_register.csv` | The same content as a flat table. Opens in Excel or Google Sheets; import into CKAN or Airtable. | Partner agencies filling in their own rows |
 | `climate_health_catalogue.html` | Single-file web page. Search, filter by project, domain and access, expand any record. No server and no build step. Works offline; only the two webfonts need a connection, and it falls back to system fonts without one. | Anyone who needs to look something up |
-| `climate_health_catalogue.docx` | Printable and editable. One page per dataset, a summary table, the open gaps, the field definitions and a change log. | The revewer report, and anyone who prefers paper |
+| `climate_health_catalogue.docx` | Printable and editable. One page per dataset, a summary table, the open gaps, the field definitions and a change log. **Not in the repository** — it embeds the gaps register, so it is built locally and shared directly. | The revewer report, and anyone who prefers paper |
+| `gaps.json` | The open gaps register — internal review material. **Not in the repository.** Kept beside the checkout; `build_docx.js` reads it if present. | The laboratory, when reviewing progress |
 
 ## The loop
 
@@ -17,6 +18,8 @@ Edit `catalogue.json`, then rebuild both outputs:
 python3 build_web.py     # writes the CSV and the HTML
 node   build_docx.js     # writes the DOCX
 ```
+
+`build_docx.js` also reads `gaps.json` if it is beside the checkout. Without it the DOCX builds without the gaps section — which is what anyone cloning the public repository gets, and is intended.
 
 If you would rather work in a spreadsheet, edit the CSV and convert it back to JSON before rebuilding. Do not edit the DOCX and expect the change to survive a rebuild — copy it back into the source first.
 
@@ -40,9 +43,9 @@ GitHub rebuilds on every push to `main`. The new version is live in under a minu
 
 Three things about that setup:
 
-- **Only `docs/` is published.** Pages serves that folder and nothing above it, so `catalogue.json`, the CSV register, the DOCX and the build scripts stay in the repository and off the web. `build_web.py` writes the page into `docs/` and the register into the repo root — that split is the whole mechanism, so do not move files between the two without meaning it.
+- **Only `docs/` is published as a page.** Pages serves that folder and nothing above it. `build_web.py` writes the page into `docs/` and the register into the repo root — that split is the whole mechanism, so do not move files between the two without meaning it.
 - `docs/index.html` is a six-line redirect to `climate_health_catalogue.html`. GitHub Pages serves `index.html` at the site root, and without it the bare URL 404s. It holds no copy of the page, so it never goes stale.
-- **The repository is private. The published site is not.** Anyone with the URL can read anything in `docs/`. Restricting a Pages site to logged-in users requires GitHub Enterprise Cloud. The URL is the only thing between the published page and the open web — which is why internal material, such as the gaps register, is kept out of the page and left to the DOCX.
+- **The repository is public.** Everything committed is readable by anyone, and so is every past commit. Internal material is therefore kept out of the repository altogether rather than merely out of `docs/`: the gaps register lives in `gaps.json` and the DOCX is built from it, and both are listed in `.gitignore`. Before committing anything new, ask whether it can be read by a stranger — for this repository that is the only test that matters.
 
 ## Look and feel
 
@@ -55,3 +58,16 @@ Two things are deliberately *not* taken from the personal site. The domain and a
 The 27 fields follow DCAT (the EU and Brazilian government standard for data catalogues) with four additions that matter for climate–health work and are not in DCAT: **analysis unit**, **latency**, **linkage key** and **known limitations**. Latency is the field that decides whether a dataset can support an operational decision. Linkage key is the field that makes the catalogue usable rather than merely descriptive.
 
 Any organisation joining the catalogue fills in these fields for its own datasets and keeps its own data where it is. That is all the coordination required.
+
+## Licence
+
+Two kinds of material, licensed separately in [`LICENCE`](LICENCE):
+
+- **The build scripts** — `build_web.py`, `build_docx.js`, and the HTML, CSS and JavaScript they emit — under the **MIT Licence**.
+- **The catalogue itself** — `catalogue.json`, the CSV register, the DOCX, the records on the published page, and this guide — under **CC BY 4.0**. Reuse it anywhere, including commercially, provided you attribute:
+
+  > IPSP Climate and Health Metadata Catalogue, Institut Pasteur de São Paulo, https://mauroccm.github.io/climate-health-catalogue/
+
+Copyright © 2026 Institut Pasteur de São Paulo and Mauro César Cafundó de Morais.
+
+The distinction that matters: **this licence covers the descriptions, not the datasets they describe.** The catalogue is metadata. Each record's `licence` field carries the terms of the underlying data, and several of those are held by third parties or governed by a data-use agreement — nothing here grants any right to them.

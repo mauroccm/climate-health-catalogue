@@ -10,7 +10,8 @@ WEB.mkdir(exist_ok=True)
 
 D = json.loads(SRC.read_text(encoding="utf-8"))
 # "gaps" is deliberately not read here: it is internal review material and must not
-# reach the public page. It stays in catalogue.json and is rendered by build_docx.js.
+# reach the public page. It lives in gaps.json, which is not committed, and is
+# rendered by build_docx.js.
 cat, sets, fields = D["catalogue"], D["datasets"], D["field_definitions"]
 
 # Spatial / temporal granularity on a 5-step coarse-to-fine scale, used by the

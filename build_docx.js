@@ -6,7 +6,13 @@ const {
 } = require('docx');
 
 const D = JSON.parse(fs.readFileSync(__dirname + '/catalogue.json', 'utf8'));
-const cat = D.catalogue, sets = D.datasets, gaps = D.gaps, fields = D.field_definitions;
+const cat = D.catalogue, sets = D.datasets, fields = D.field_definitions;
+
+// The gaps register is internal review material and is not committed. It lives in
+// gaps.json alongside this script; without that file the DOCX builds without the
+// gaps section, which is what a clone of the public repository gets.
+const GAPS_SRC = __dirname + '/gaps.json';
+const gaps = fs.existsSync(GAPS_SRC) ? JSON.parse(fs.readFileSync(GAPS_SRC, 'utf8')).gaps : [];
 
 const W = 9638;               // usable width in DXA (A4 portrait, 2 cm margins)
 const INK = '16212B', GREY = '6B7A85', RULE = 'CBD5DB';
@@ -174,27 +180,29 @@ order.forEach(domain => {
 });
 
 // ---------- gaps ----------
-body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { after: 100 },
-  children: [new TextRun({ text: 'Open gaps and next steps', bold: true, size: 28, color: INK, font: 'Calibri' })] }));
-body.push(p('What the catalogue makes visible. Each item names the missing description or dataset, who owns it and when it closes. ' + gaps.filter(g => g.status === 'Resolved').length + ' of ' + gaps.length + ' are now resolved.', { size: 20, color: GREY, after: 180 }));
+if (gaps.length) {
+  body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { after: 100 },
+    children: [new TextRun({ text: 'Open gaps and next steps', bold: true, size: 28, color: INK, font: 'Calibri' })] }));
+  body.push(p('What the catalogue makes visible. Each item names the missing description or dataset, who owns it and when it closes. ' + gaps.filter(g => g.status === 'Resolved').length + ' of ' + gaps.length + ' are now resolved.', { size: 20, color: GREY, after: 180 }));
 
-const GW = [620, W - 620];
-const TONE = { 'Resolved': '2E6B3E', 'In progress': '9A6B15', 'Planned': '6B7A85' };
-gaps.forEach((g, i) => {
-  body.push(new Table({ columnWidths: GW, width: { size: W, type: WidthType.DXA }, rows: [new TableRow({ children: [
-    cell([p(String(i + 1).padStart(2, '0'), { font: 'Consolas', bold: true, size: 20, color: TONE[g.status], after: 0 })],
-      { w: GW[0], fill: g.status === 'Resolved' ? 'F0F6F1' : 'FBF7EF', bc: RULE }),
-    cell([
-      p(g.gap, { bold: true, size: 21, after: 30 }),
-      p(g.status.toUpperCase() + '   \u00b7   ' + g.owner + '   \u00b7   ' + g.when,
-        { font: 'Consolas', size: 15, color: TONE[g.status], after: 70 }),
-      p(g.detail, { size: 19, color: GREY, after: 80 }),
-      label(g.status === 'Resolved' ? 'What was done' : 'Next step', TONE[g.status]),
-      p(g.action, { size: 19, after: 0 })
-    ], { w: GW[1], bc: RULE })
-  ] })] }));
-  body.push(p('', { after: 100 }));
-});
+  const GW = [620, W - 620];
+  const TONE = { 'Resolved': '2E6B3E', 'In progress': '9A6B15', 'Planned': '6B7A85' };
+  gaps.forEach((g, i) => {
+    body.push(new Table({ columnWidths: GW, width: { size: W, type: WidthType.DXA }, rows: [new TableRow({ children: [
+      cell([p(String(i + 1).padStart(2, '0'), { font: 'Consolas', bold: true, size: 20, color: TONE[g.status], after: 0 })],
+        { w: GW[0], fill: g.status === 'Resolved' ? 'F0F6F1' : 'FBF7EF', bc: RULE }),
+      cell([
+        p(g.gap, { bold: true, size: 21, after: 30 }),
+        p(g.status.toUpperCase() + '   \u00b7   ' + g.owner + '   \u00b7   ' + g.when,
+          { font: 'Consolas', size: 15, color: TONE[g.status], after: 70 }),
+        p(g.detail, { size: 19, color: GREY, after: 80 }),
+        label(g.status === 'Resolved' ? 'What was done' : 'Next step', TONE[g.status]),
+        p(g.action, { size: 19, after: 0 })
+      ], { w: GW[1], bc: RULE })
+    ] })] }));
+    body.push(p('', { after: 100 }));
+  });
+}
 
 // ---------- field definitions ----------
 body.push(new Paragraph({ heading: HeadingLevel.HEADING_1, spacing: { before: 300, after: 100 },
