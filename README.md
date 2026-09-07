@@ -45,7 +45,7 @@ Three things about that setup:
 
 - **Only `docs/` is published as a page.** Pages serves that folder and nothing above it. `build_web.py` writes the page into `docs/` and the register into the repo root — that split is the whole mechanism, so do not move files between the two without meaning it.
 - `docs/index.html` is a six-line redirect to `climate_health_catalogue.html`. GitHub Pages serves `index.html` at the site root, and without it the bare URL 404s. It holds no copy of the page, so it never goes stale.
-- **The repository is public.** Everything committed is readable by anyone, and so is every past commit. Internal material is therefore kept out of the repository altogether rather than merely out of `docs/`: the gaps register lives in `gaps.json` and the DOCX is built from it, and both are listed in `.gitignore`. Before committing anything new, ask whether it can be read by a stranger — for this repository that is the only test that matters.
+- **Treat everything committed as public.** The repository is private today but is prepared to be opened, and opening it would expose every past commit as well as the current one. Internal material is therefore kept out of the repository altogether rather than merely out of `docs/`: the gaps register lives in `gaps.json`, the DOCX is built from it, and both are in `.gitignore`, along with `EDITING_GUIDE.pdf`. Before committing anything new, ask whether it could be read by a stranger — for this repository that is the only test that matters.
 
 ## Look and feel
 
