@@ -19,6 +19,14 @@ python3 build_web.py     # writes the CSV and the HTML
 node   build_docx.js     # writes the DOCX
 ```
 
+The two PDFs are built from their Markdown with `convert2pdf` (a local script: python-markdown
+plus WeasyPrint, not in this repository):
+
+```bash
+convert2pdf README.md README.pdf
+convert2pdf EDITING_GUIDE.md EDITING_GUIDE.pdf
+```
+
 `build_docx.js` also reads `gaps.json` if it is beside the checkout. Without it the DOCX builds without the gaps section — which is what anyone cloning the public repository gets, and is intended.
 
 If you would rather work in a spreadsheet, edit the CSV and convert it back to JSON before rebuilding. Do not edit the DOCX and expect the change to survive a rebuild — copy it back into the source first.
